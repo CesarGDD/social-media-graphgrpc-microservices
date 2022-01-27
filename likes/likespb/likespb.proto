@@ -1,0 +1,139 @@
+syntax = "proto3";
+
+package likespb;
+
+option go_package = "/likespb";
+
+// PostLikes
+
+message PostLike {
+    int32 id = 1;
+    int64 created_at = 2;
+    int32 user_id = 3;
+    int32 post_id = 4;
+}
+
+message CreatePostLikeRequest {
+    PostLike postLike = 1;
+}
+
+message CreatePostLikeResponse {
+    PostLike postLike = 1;
+}
+
+message GetPostLikeRequest {
+    int32 id = 1;
+}
+
+message GetPostLikeResponse {
+    PostLike postLike = 1;
+}
+
+
+message DeletePostLikeRequest {
+    int32 id = 1;
+}
+
+message DeletePostLikeResponse {
+    PostLike PostLike = 1;
+}
+
+message ListPostLikesRequest {
+
+}
+
+message ListPostLikesResponse {
+    repeated PostLike PostLike = 1;
+}
+
+message ListPostLikesByIdRequest {
+    int32 id = 1;
+}
+
+message ListPostLikesByIdResponse {
+    repeated PostLike PostLike = 1;
+}
+
+message ListPostLikesByPostIdRequest {
+    int32 post_id = 1;
+}
+
+message ListPostLikesByPostIdResponse {
+    repeated PostLike PostLike = 1;
+}
+
+service PostLikesService {
+    rpc CreatePostLike (CreatePostLikeRequest) returns (CreatePostLikeResponse);
+    rpc GetPostLike (GetPostLikeRequest) returns (GetPostLikeResponse);
+    rpc DeletePostLike (DeletePostLikeRequest) returns (DeletePostLikeResponse);
+    rpc ListPostLikes (ListPostLikesRequest) returns (ListPostLikesResponse);
+    rpc ListPostLikesById (ListPostLikesByIdRequest) returns (ListPostLikesByIdResponse);
+    rpc ListPostLikesByPostId (ListPostLikesByPostIdRequest) returns (ListPostLikesByPostIdResponse);
+}
+
+// CommentLikes
+
+message CommentLike {
+    int32 id = 1;
+    int64 created_at = 2;
+    int32 user_id = 3;
+    int32 comment_id = 4;
+}
+
+message CreateCommentLikeRequest {
+    CommentLike commentLike = 1;
+}
+
+message CreateCommentLikeResponse {
+    CommentLike commentLike = 1;
+}
+
+message GetCommentLikeRequest {
+    int32 id = 1;
+}
+
+message GetCommentLikeResponse {
+    CommentLike commentLike = 1;
+}
+
+
+message DeleteCommentLikeRequest {
+    int32 id = 1;
+}
+
+message DeleteCommentLikeResponse {
+    CommentLike commentLike = 1;
+}
+
+message ListCommentLikesRequest {
+
+}
+
+message ListCommentLikesResponse {
+    repeated CommentLike commentLike = 1;
+}
+
+message ListCommentLikesByIdRequest {
+    int32 id = 1;
+}
+
+message ListCommentLikesByIdResponse {
+    repeated CommentLike commentLike = 1;
+}
+
+message ListCommentLikesByCommentIdRequest {
+    int32 comment_id = 1;
+}
+
+message ListCommentLikesByCommentIdResponse {
+    repeated CommentLike commentLike = 1;
+}
+
+service CommentLikesService {
+    rpc CreateCommentLike (CreateCommentLikeRequest) returns (CreateCommentLikeResponse);
+    rpc GetCommentLike (GetCommentLikeRequest) returns (GetCommentLikeResponse);
+    rpc DeleteCommentLike (DeleteCommentLikeRequest) returns (DeleteCommentLikeResponse);
+    rpc ListCommentLikes (ListCommentLikesRequest) returns (ListCommentLikesResponse);
+    rpc ListCommentLikesById (ListCommentLikesByIdRequest) returns (ListCommentLikesByIdResponse);
+    rpc ListCommentLikesByCommentId (ListCommentLikesByCommentIdRequest) returns (ListCommentLikesByCommentIdResponse);
+}

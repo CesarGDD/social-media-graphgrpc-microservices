@@ -1,0 +1,23 @@
+type Post {
+  id: Int!
+  created_at: Int!
+  updated_at: Int!
+  url: String!
+  caption: String
+  user_id: Int!
+  comments: [Comment!]
+  likes: [PostLike!]
+  user: User!
+}
+
+input NewPost {
+  url: String!
+  caption: String
+  user_id: Int!
+}
+
+input EditPost {
+  id: Int!
+  url: String
+  caption: String
+}

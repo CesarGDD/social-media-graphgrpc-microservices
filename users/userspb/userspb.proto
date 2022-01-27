@@ -1,0 +1,145 @@
+syntax = "proto3";
+
+package userspb;
+
+option go_package = "/userspb";
+
+// User
+message User {
+    int32 id = 1;
+    int64 createdAt = 2;
+    int64 updatedAt = 3;
+    string username = 4;
+    string bio = 5;
+    string email = 6;
+    string password = 7;
+    string avatar = 8;
+}
+
+message CreateUserRequest {
+    User user = 1;
+}
+
+message CreateUserResponse {
+    User user = 1;
+}
+
+message GetUserRequest {
+    int32 id = 1;
+}
+
+message GetUserResponse {
+    User user = 1;
+}
+
+message UpdateUserRequest {
+    int32 id = 1;
+    string bio = 2;
+    string avatar = 3;
+    int64 updatedAt = 4;
+}
+
+message UpdateUserResponse {
+    User user = 1;
+}
+
+message DeleteUserRequest {
+    int32 id = 1;
+}
+
+message DeleteUserResponse {
+    User user = 1;
+}
+
+message ListUsersRequest {
+
+}
+
+message ListUsersResponse {
+    repeated User user = 1;
+}
+
+message ListUsersByIdRequest {
+    int32 id = 1;
+}
+
+message ListUsersByIdResponse {
+    repeated User user = 1;
+}
+
+service UsersService {
+    rpc CreateUser (CreateUserRequest) returns (CreateUserResponse);
+    rpc GetUser (GetUserRequest) returns (GetUserResponse);
+    rpc UpdateUser (UpdateUserRequest) returns (UpdateUserResponse);
+    rpc DeleteUser (DeleteUserRequest) returns (DeleteUserResponse);
+    rpc ListUsers (ListUsersRequest) returns (ListUsersResponse);
+    rpc ListUsersById (ListUsersByIdRequest) returns (ListUsersByIdResponse);
+}
+
+
+// Follower
+
+message Follower {
+    int32 id = 1;
+    int64 created_at = 2;
+    int32 leader_id = 3;
+    int32 follower_id = 4;
+}
+
+message CreateFollowerRequest {
+    Follower follower = 1;
+}
+
+message CreateFollowerResponse {
+    Follower follower = 1;
+}
+
+message GetFollowerRequest {
+    int32 id = 1;
+}
+
+message GetFollowerResponse {
+    Follower follower = 1;
+}
+
+
+message DeleteFollowerRequest {
+    int32 id = 1;
+}
+
+message DeleteFollowerResponse {
+    Follower follower = 1;
+}
+
+message ListFollowersRequest {
+
+}
+
+message ListFollowersResponse {
+    repeated Follower follower = 1;
+}
+
+message ListFollowersByIdRequest {
+    int32 id = 1;
+}
+
+message ListFollowersByIdResponse {
+    repeated Follower follower = 1;
+}
+
+message ListFollowersByLeaderIdRequest {
+    int32 leader_id = 1;
+}
+
+message ListFollowersByLeaderIdResponse {
+    repeated Follower follower = 1;
+}
+
+service FollowersService {
+    rpc CreateFollower (CreateFollowerRequest) returns (CreateFollowerResponse);
+    rpc GetFollower (GetFollowerRequest) returns (GetFollowerResponse);
+    rpc DeleteFollower (DeleteFollowerRequest) returns (DeleteFollowerResponse);
+    rpc ListFollowers (ListFollowersRequest) returns (ListFollowersResponse);
+    rpc ListFollowersById (ListFollowersByIdRequest) returns (ListFollowersByIdResponse);
+    rpc ListFollowersByLeaderId (ListFollowersByLeaderIdRequest) returns (ListFollowersByLeaderIdResponse);
+}

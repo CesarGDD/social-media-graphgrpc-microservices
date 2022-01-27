@@ -1,0 +1,12 @@
+type Follower {
+  id: Int!
+  created_at: Int!
+  leader_id: Int!
+  follower_id: Int!
+  user: User!
+}
+
+input NewFollower {
+  leader_id: Int!
+  follower_id: Int!
+}

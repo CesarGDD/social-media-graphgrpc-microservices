@@ -1,0 +1,8 @@
+CREATE TABLE comments (
+	id SERIAL PRIMARY KEY,
+	created_at BIGINT NOT NULL,
+	updated_at BIGINT NOT NULL,
+	contents VARCHAR(240) NOT NULL,
+	user_id INTEGER NOT NULL,
+	post_id INTEGER NOT NULL
+);

@@ -1,0 +1,571 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "/pb";
+
+// User
+message User {
+    int32 id = 1;
+    int64 createdAt = 2;
+    int64 updatedAt = 3;
+    string username = 4;
+    string bio = 5;
+    string email = 6;
+    string password = 7;
+    string avatar = 8;
+}
+
+message CreateUserRequest {
+    User user = 1;
+}
+
+message CreateUserResponse {
+    User user = 1;
+}
+
+message GetUserRequest {
+    int32 id = 1;
+}
+
+message GetUserResponse {
+    User user = 1;
+}
+
+message UpdateUserRequest {
+    int32 id = 1;
+    string bio = 2;
+    string avatar = 3;
+    int64 updatedAt = 4;
+}
+
+message UpdateUserResponse {
+    User user = 1;
+}
+
+message DeleteUserRequest {
+    int32 id = 1;
+}
+
+message DeleteUserResponse {
+    User user = 1;
+}
+
+message ListUsersRequest {
+
+}
+
+message ListUsersResponse {
+    repeated User user = 1;
+}
+
+message ListUsersByIdRequest {
+    int32 id = 1;
+}
+
+message ListUsersByIdResponse {
+    repeated User user = 1;
+}
+
+service UsersService {
+    rpc CreateUser (CreateUserRequest) returns (CreateUserResponse);
+    rpc GetUser (GetUserRequest) returns (GetUserResponse);
+    rpc UpdateUser (UpdateUserRequest) returns (UpdateUserResponse);
+    rpc DeleteUser (DeleteUserRequest) returns (DeleteUserResponse);
+    rpc ListUsers (ListUsersRequest) returns (ListUsersResponse);
+    rpc ListUsersById (ListUsersByIdRequest) returns (ListUsersByIdResponse);
+}
+
+// Post
+
+message Post {
+    int32 id = 1;
+    int64 created_at = 2;
+    int64 updated_at = 3;
+    string url = 4;
+    string caption = 5;
+    int32 user_id = 6;
+}
+
+message CreatePostRequest {
+    Post post = 1;
+}
+
+message CreatePostResponse {
+    Post post = 1;
+}
+
+message GetPostRequest {
+    int32 id = 1;
+}
+
+message GetPostResponse {
+    Post post = 1;
+}
+
+message UpdatePostRequest {
+    int32 post_id = 1;
+    int64 updated_at = 2;
+    string url = 3;
+    string caption = 4;
+}
+
+message UpdatePostResponse {
+    Post post = 1;
+}
+
+message DeletePostRequest {
+    int32 id = 1;
+}
+
+message DeletePostResponse {
+    Post post = 1;
+}
+
+message ListPostsRequest {
+
+}
+
+message ListPostsResponse {
+    repeated Post post = 1;
+}
+
+message ListPostsByIdRequest {
+    int32 id = 1;
+}
+
+message ListPostsByIdResponse {
+    repeated Post post = 1;
+}
+
+message ListPostsByUserIdRequest {
+    int32 user_id = 1;
+}
+
+message ListPostsByUserIdResponse {
+    repeated Post post = 1;
+}
+
+service PostsService {
+    rpc CreatePost (CreatePostRequest) returns (CreatePostResponse);
+    rpc GetPost (GetPostRequest) returns (GetPostResponse);
+    rpc UpdatePost (UpdatePostRequest) returns (UpdatePostResponse);
+    rpc DeletePost (DeletePostRequest) returns (DeletePostResponse);
+    rpc ListPosts (ListPostsRequest) returns (ListPostsResponse);
+    rpc ListPostsById (ListPostsByIdRequest) returns (ListPostsByIdResponse);
+    rpc ListPostsByUserId (ListPostsByUserIdRequest) returns (ListPostsByUserIdResponse);
+}
+
+// Comment
+
+message Comment {
+    int32 id = 1;
+    int64 created_at = 2;
+    int64 updated_at = 3;
+    string contents = 4;
+    int32 user_id = 5;
+    int32 post_id = 6;
+}
+
+message CreateCommentRequest {
+    Comment comment = 1;
+}
+
+message CreateCommentResponse {
+    Comment comment = 1;
+}
+
+message GetCommentRequest {
+    int32 id = 1;
+}
+
+message GetCommentResponse {
+    Comment comment = 1;
+}
+
+message UpdateCommentRequest {
+    int32 id = 1;
+    int64 updated_at = 2;
+    string contents = 3;
+}
+
+message UpdateCommentResponse {
+    Comment comment = 1;
+}
+
+message DeleteCommentRequest {
+    int32 id = 1;
+}
+
+message DeleteCommentResponse {
+    Comment comment = 1;
+}
+
+message ListCommentsRequest {
+
+}
+
+message ListCommentsResponse {
+    repeated Comment comment = 1;
+}
+
+message ListCommentsByIdRequest {
+    int32 id = 1;
+}
+
+message ListCommentsByIdResponse {
+    repeated Comment comment = 1;
+}
+
+message ListCommentsByPostIdRequest {
+    int32 post_id = 1;
+}
+
+message ListCommentsByPostIdResponse {
+    repeated Comment comment = 1;
+}
+
+service CommentsService {
+    rpc CreateComment (CreateCommentRequest) returns (CreateCommentResponse);
+    rpc GetComment (GetCommentRequest) returns (GetCommentResponse);
+    rpc UpdateComment (UpdateCommentRequest) returns (UpdateCommentResponse);
+    rpc DeleteComment (DeleteCommentRequest) returns (DeleteCommentResponse);
+    rpc ListComments (ListCommentsRequest) returns (ListCommentsResponse);
+    rpc ListCommentsById (ListCommentsByIdRequest) returns (ListCommentsByIdResponse);
+    rpc ListCommentsByPostId (ListCommentsByPostIdRequest) returns (ListCommentsByPostIdResponse);
+}
+
+
+// PostLikes
+
+message PostLike {
+    int32 id = 1;
+    int64 created_at = 2;
+    int32 user_id = 3;
+    int32 post_id = 4;
+}
+
+message CreatePostLikeRequest {
+    PostLike postLike = 1;
+}
+
+message CreatePostLikeResponse {
+    PostLike postLike = 1;
+}
+
+message GetPostLikeRequest {
+    int32 id = 1;
+}
+
+message GetPostLikeResponse {
+    PostLike postLike = 1;
+}
+
+
+message DeletePostLikeRequest {
+    int32 id = 1;
+}
+
+message DeletePostLikeResponse {
+    PostLike PostLike = 1;
+}
+
+message ListPostLikesRequest {
+
+}
+
+message ListPostLikesResponse {
+    repeated PostLike PostLike = 1;
+}
+
+message ListPostLikesByIdRequest {
+    int32 id = 1;
+}
+
+message ListPostLikesByIdResponse {
+    repeated PostLike PostLike = 1;
+}
+
+message ListPostLikesByPostIdRequest {
+    int32 post_id = 1;
+}
+
+message ListPostLikesByPostIdResponse {
+    repeated PostLike PostLike = 1;
+}
+
+service PostLikesService {
+    rpc CreatePostLike (CreatePostLikeRequest) returns (CreatePostLikeResponse);
+    rpc GetPostLike (GetPostLikeRequest) returns (GetPostLikeResponse);
+    rpc DeletePostLike (DeletePostLikeRequest) returns (DeletePostLikeResponse);
+    rpc ListPostLikes (ListPostLikesRequest) returns (ListPostLikesResponse);
+    rpc ListPostLikesById (ListPostLikesByIdRequest) returns (ListPostLikesByIdResponse);
+    rpc ListPostLikesByPostId (ListPostLikesByPostIdRequest) returns (ListPostLikesByPostIdResponse);
+}
+
+// CommentLikes
+
+message CommentLike {
+    int32 id = 1;
+    int64 created_at = 2;
+    int32 user_id = 3;
+    int32 comment_id = 4;
+}
+
+message CreateCommentLikeRequest {
+    CommentLike commentLike = 1;
+}
+
+message CreateCommentLikeResponse {
+    CommentLike commentLike = 1;
+}
+
+message GetCommentLikeRequest {
+    int32 id = 1;
+}
+
+message GetCommentLikeResponse {
+    CommentLike commentLike = 1;
+}
+
+
+message DeleteCommentLikeRequest {
+    int32 id = 1;
+}
+
+message DeleteCommentLikeResponse {
+    CommentLike commentLike = 1;
+}
+
+message ListCommentLikesRequest {
+
+}
+
+message ListCommentLikesResponse {
+    repeated CommentLike commentLike = 1;
+}
+
+message ListCommentLikesByIdRequest {
+    int32 id = 1;
+}
+
+message ListCommentLikesByIdResponse {
+    repeated CommentLike commentLike = 1;
+}
+
+message ListCommentLikesByCommentIdRequest {
+    int32 comment_id = 1;
+}
+
+message ListCommentLikesByCommentIdResponse {
+    repeated CommentLike commentLike = 1;
+}
+
+service CommentLikesService {
+    rpc CreateCommentLike (CreateCommentLikeRequest) returns (CreateCommentLikeResponse);
+    rpc GetCommentLike (GetCommentLikeRequest) returns (GetCommentLikeResponse);
+    rpc DeleteCommentLike (DeleteCommentLikeRequest) returns (DeleteCommentLikeResponse);
+    rpc ListCommentLikes (ListCommentLikesRequest) returns (ListCommentLikesResponse);
+    rpc ListCommentLikesById (ListCommentLikesByIdRequest) returns (ListCommentLikesByIdResponse);
+    rpc ListCommentLikesByCommentId (ListCommentLikesByCommentIdRequest) returns (ListCommentLikesByCommentIdResponse);
+}
+
+
+// Hashtag
+
+message Hashtag {
+    int32 id = 1;
+    int64 created_at = 2;
+    string title = 3;
+}
+
+message CreateHashtagRequest {
+    Hashtag hashtag = 1;
+}
+
+message CreateHashtagResponse {
+    Hashtag hashtag = 1;
+}
+
+message GetHashtagByTitleRequest {
+    string title = 1;
+}
+
+message GetHashtagByTitleResponse {
+    Hashtag hashtag = 1;
+}
+
+message GetHashtagRequest {
+    int32 id = 1;
+}
+
+message GetHashtagResponse {
+    Hashtag hashtag = 1;
+}
+
+message UpdateHashtagRequest {
+    int32 id = 1;
+    string title = 2;
+}
+
+message UpdateHashtagResponse {
+    Hashtag hashtag = 1;
+}
+
+
+message DeleteHashtagRequest {
+    int32 id = 1;
+}
+
+message DeleteHashtagResponse {
+    Hashtag hashtag = 1;
+}
+
+message ListHashtagsRequest {
+
+}
+
+message ListHashtagsResponse {
+    repeated Hashtag hashtag = 1;
+}
+
+message ListHashtagsByIdRequest {
+    int32 id = 1;
+}
+
+message ListHashtagsByIdResponse {
+    repeated Hashtag hashtag = 1;
+}
+
+service HashtagsService {
+    rpc CreateHashtag (CreateHashtagRequest) returns (CreateHashtagResponse);
+    rpc GetHashtagByTitle (GetHashtagByTitleRequest) returns (GetHashtagByTitleResponse);
+    rpc GetHashtag (GetHashtagRequest) returns (GetHashtagResponse);
+    rpc UpdateHashtag (UpdateHashtagRequest) returns (UpdateHashtagResponse);
+    rpc DeleteHashtag (DeleteHashtagRequest) returns (DeleteHashtagResponse);
+    rpc ListHashtags (ListHashtagsRequest) returns (ListHashtagsResponse);
+    rpc ListHashtagsById (ListHashtagsByIdRequest) returns (ListHashtagsByIdResponse);
+}
+
+// HashtagPost
+
+message HashtagPost {
+    int32 id = 1;
+    int32 hashtag_id = 2;
+    int32 post_id = 3;
+}
+
+message CreateHashtagPostRequest {
+    HashtagPost hashtagPost = 1;
+}
+
+message CreateHashtagPostResponse {
+    HashtagPost hashtagPost = 1;
+}
+
+message GetHashtagPostRequest {
+    int32 id = 1;
+}
+
+message GetHashtagPostResponse {
+    HashtagPost hashtagPost = 1;
+}
+
+message DeleteHashtagPostRequest {
+    int32 id = 1;
+}
+
+message DeleteHashtagPostResponse {
+    HashtagPost hashtagPost = 1;
+}
+
+message ListHashtagPostsRequest {
+
+}
+
+message ListHashtagPostsResponse {
+    repeated HashtagPost hashtagPost = 1;
+}
+
+message ListHashtagPostsByIdRequest {
+    int32 id = 1;
+}
+
+message ListHashtagPostsByIdResponse {
+    repeated HashtagPost hashtagPost = 1;
+}
+
+service HashtagPostsService {
+    rpc CreateHashtagPost (CreateHashtagPostRequest) returns (CreateHashtagPostResponse);
+    rpc GetHashtagPost (GetHashtagPostRequest) returns (GetHashtagPostResponse);
+    rpc DeleteHashtagPost (DeleteHashtagPostRequest) returns (DeleteHashtagPostResponse);
+    rpc ListHashtagPosts (ListHashtagPostsRequest) returns (ListHashtagPostsResponse);
+    rpc ListHashtagPostsById (ListHashtagPostsByIdRequest) returns (ListHashtagPostsByIdResponse);
+}
+
+// Follower
+
+message Follower {
+    int32 id = 1;
+    int64 created_at = 2;
+    int32 leader_id = 3;
+    int32 follower_id = 4;
+}
+
+message CreateFollowerRequest {
+    Follower follower = 1;
+}
+
+message CreateFollowerResponse {
+    Follower follower = 1;
+}
+
+message GetFollowerRequest {
+    int32 id = 1;
+}
+
+message GetFollowerResponse {
+    Follower follower = 1;
+}
+
+
+message DeleteFollowerRequest {
+    int32 id = 1;
+}
+
+message DeleteFollowerResponse {
+    Follower follower = 1;
+}
+
+message ListFollowersRequest {
+
+}
+
+message ListFollowersResponse {
+    repeated Follower follower = 1;
+}
+
+message ListFollowersByIdRequest {
+    int32 id = 1;
+}
+
+message ListFollowersByIdResponse {
+    repeated Follower follower = 1;
+}
+
+message ListFollowersByLeaderIdRequest {
+    int32 leader_id = 1;
+}
+
+message ListFollowersByLeaderIdResponse {
+    repeated Follower follower = 1;
+}
+
+service FollowersService {
+    rpc CreateFollower (CreateFollowerRequest) returns (CreateFollowerResponse);
+    rpc GetFollower (GetFollowerRequest) returns (GetFollowerResponse);
+    rpc DeleteFollower (DeleteFollowerRequest) returns (DeleteFollowerResponse);
+    rpc ListFollowers (ListFollowersRequest) returns (ListFollowersResponse);
+    rpc ListFollowersById (ListFollowersByIdRequest) returns (ListFollowersByIdResponse);
+    rpc ListFollowersByLeaderId (ListFollowersByLeaderIdRequest) returns (ListFollowersByLeaderIdResponse);
+}

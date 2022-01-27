@@ -1,0 +1,37 @@
+type Mutation {
+  # Users
+  createUser(input: NewUser):User!
+  updateUser(input: EditUser):User!
+  deleteUser(input: Int):User
+
+  # Posts
+  createPost(input:NewPost):Post!
+  updatePost(input:EditPost):Post!
+  deletePost(input: Int):Post
+
+  # Comments
+  createComment(input: NewComment): Comment!
+  updateComment(input: EditComment): Comment!
+  deleteComment(input: Int): Comment
+
+  # PostLikes
+  createPostLike(input: NewPostLike): PostLike!
+  deletePostLike(input: Int): PostLike
+  
+  # CommentLikes
+  createCommentLike(input: NewCommentLike): CommentLike!
+  deleteCommentLike(input: Int): CommentLike
+
+  # Hashtag
+  createHashtag(input: NewHashtag): Hashtag!
+  updateHashtag(input: EditHashtag): Hashtag!
+  deleteHashtag(input: Int): Hashtag
+  
+  # Hashtag
+  createHashtagPost(input: NewHashtagPost): HashtagPost!
+  deleteHashtagPost(input: Int): HashtagPost
+
+  # Followers
+  createFollower(input: NewFollower): Follower!
+  deleteFollower(input: Int): Follower
+}

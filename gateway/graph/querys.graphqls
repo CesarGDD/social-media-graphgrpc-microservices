@@ -1,0 +1,28 @@
+type Query {
+  # Users
+  user(id: Int!): User!
+  userByUsername(username: String!): User! 
+  users: [User!]!
+  # Posts
+  post(id: Int!): Post!
+  posts: [Post!]!
+  # Comments
+  comment(id: Int!): Comment!
+  comments: [Comment!]!
+  # PostLikes
+  PostLike(id: Int!): PostLike!
+  PostLikes: [PostLike!]!
+  # CommentLikes
+  CommentLike(id: Int!): CommentLike!
+  CommentLikes: [CommentLike!]!
+  # Hashtag
+  hashtagByTitle(title: String!): Hashtag!
+  hashtag(id: Int!): Hashtag!
+  hashtags: [Hashtag!]!
+  # HashtagPost
+  hashtagPost(id: Int!): HashtagPost!
+  hashtagsPost: [HashtagPost!]!
+  # Followers
+  follower(id: Int!): Follower!
+  followers:[Follower!]!
+}

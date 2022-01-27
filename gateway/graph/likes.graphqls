@@ -1,0 +1,27 @@
+# PostLikes Schema
+type PostLike {
+  id: Int!
+  created_at: Int!
+  user_id: Int!
+  post_id: Int!
+  user: User!
+}
+
+input NewPostLike {
+  user_id: Int!
+  post_id: Int!
+}
+
+# CommentLikes Schema
+type CommentLike {
+  id: Int!
+  created_at: Int!
+  user_id: Int!
+  commentId: Int!
+  user: User!
+}
+
+input NewCommentLike {
+  user_id: Int!
+  commentId: Int!
+}

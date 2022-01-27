@@ -1,0 +1,22 @@
+type Comment {
+  id: Int!
+  created_at: Int!
+  updated_at: Int!
+  contents: String!
+  user_id: Int!
+  post_id: Int!
+  likes: [CommentLike!]
+  user: User!
+}
+
+input NewComment {
+  contents: String!
+  user_id: Int!
+  post_id: Int!
+}
+
+input EditComment {
+  id: Int!
+  contents: String!
+}
+

@@ -1,0 +1,28 @@
+# Hashtag Schema
+type Hashtag {
+  id: Int!
+  created_at: Int!
+  title: String!
+}
+
+input NewHashtag {
+  title: String!
+}
+
+input EditHashtag {
+  id: Int!
+  title: String!
+}
+# HashtagPost Schema
+type HashtagPost {
+  id: Int!
+  hashtag_id: Int!
+  post_id: Int!
+  posts: [Post!]
+  hashtag: Hashtag!
+}
+
+input NewHashtagPost {
+  hashtag_id: Int!
+  post_id: Int!
+}

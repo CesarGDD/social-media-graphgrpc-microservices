@@ -1,0 +1,84 @@
+syntax = "proto3";
+
+package commentspb;
+
+option go_package = "/commentspb";
+
+// Comment
+
+message Comment {
+    int32 id = 1;
+    int64 created_at = 2;
+    int64 updated_at = 3;
+    string contents = 4;
+    int32 user_id = 5;
+    int32 post_id = 6;
+}
+
+message CreateCommentRequest {
+    Comment comment = 1;
+}
+
+message CreateCommentResponse {
+    Comment comment = 1;
+}
+
+message GetCommentRequest {
+    int32 id = 1;
+}
+
+message GetCommentResponse {
+    Comment comment = 1;
+}
+
+message UpdateCommentRequest {
+    int32 id = 1;
+    int64 updated_at = 2;
+    string contents = 3;
+}
+
+message UpdateCommentResponse {
+    Comment comment = 1;
+}
+
+message DeleteCommentRequest {
+    int32 id = 1;
+}
+
+message DeleteCommentResponse {
+    Comment comment = 1;
+}
+
+message ListCommentsRequest {
+
+}
+
+message ListCommentsResponse {
+    repeated Comment comment = 1;
+}
+
+message ListCommentsByIdRequest {
+    int32 id = 1;
+}
+
+message ListCommentsByIdResponse {
+    repeated Comment comment = 1;
+}
+
+message ListCommentsByPostIdRequest {
+    int32 post_id = 1;
+}
+
+message ListCommentsByPostIdResponse {
+    repeated Comment comment = 1;
+}
+
+service CommentsService {
+    rpc CreateComment (CreateCommentRequest) returns (CreateCommentResponse);
+    rpc GetComment (GetCommentRequest) returns (GetCommentResponse);
+    rpc UpdateComment (UpdateCommentRequest) returns (UpdateCommentResponse);
+    rpc DeleteComment (DeleteCommentRequest) returns (DeleteCommentResponse);
+    rpc ListComments (ListCommentsRequest) returns (ListCommentsResponse);
+    rpc ListCommentsById (ListCommentsByIdRequest) returns (ListCommentsByIdResponse);
+    rpc ListCommentsByPostId (ListCommentsByPostIdRequest) returns (ListCommentsByPostIdResponse);
+}

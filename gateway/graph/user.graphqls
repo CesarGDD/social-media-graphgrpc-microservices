@@ -1,0 +1,27 @@
+type User {
+  id: Int!
+  created_at: Int!
+  updated_at: Int!
+  username: String!
+  bio: String
+  avatar: String
+  email: String
+  password: String!
+  posts: [Post!]
+  followers: [Follower!]!
+}
+
+
+input NewUser {
+  username: String!
+  bio: String!
+  avatar: String!
+  email: String!
+  password: String!
+}
+
+input EditUser {
+  id: Int!
+  bio: String
+  avatar: String
+}
