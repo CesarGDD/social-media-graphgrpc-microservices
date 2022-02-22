@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: likes-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: likes
+  template:
+    metadata:
+      labels:
+        app: likes
+    spec:
+      containers:
+      - name: likes
+        image: cesargdd/likes-grpc
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: likes-service
+spec:
+  selector:
+    app: likes
+  type: ClusterIP
+  ports:
+  - port: 50054
+    targetPort: 50054
+    protocol: TCP

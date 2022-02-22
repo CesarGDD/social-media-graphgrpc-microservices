@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hashtag-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hashtag
+  template:
+    metadata:
+      labels:
+        app: hashtag
+    spec:
+      containers:
+      - name: hashtag
+        image: cesargdd/hashtag-grpc
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: hashtag-service
+spec:
+  selector:
+    app: hashtag
+  type: ClusterIP
+  ports:
+  - port: 50055
+    targetPort: 50055
+    protocol: TCP

@@ -59,5 +59,11 @@ services:
       - likes
       - hashtags
     restart: always
+    environment:
+        USERS_ADDRESS: users:50051
+        POSTS_ADDRESS: posts:50052
+        COMMENTS_ADDRESS: comments:50053
+        LIKES_ADDRESS: likes:50054
+        USERS_HASHTAG: hashtag:50055
 volumes: 
   data:

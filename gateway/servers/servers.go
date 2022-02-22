@@ -3,13 +3,14 @@ package servers
 import (
 	"cesargdd/grpc-gateway/pb"
 	"log"
+	"os"
 
 	"google.golang.org/grpc"
 )
 
 func UserServer() (pb.UsersServiceClient, pb.FollowersServiceClient) {
 	opts := grpc.WithInsecure()
-	cc, err := grpc.Dial("users:50051", opts)
+	cc, err := grpc.Dial(os.Getenv("USERS_ADDRESS"), opts)
 	if err != nil {
 		log.Fatalf("Could not connect: %v", err)
 	}
@@ -20,7 +21,7 @@ func UserServer() (pb.UsersServiceClient, pb.FollowersServiceClient) {
 }
 func PostServer() pb.PostsServiceClient {
 	opts := grpc.WithInsecure()
-	cc, err := grpc.Dial("posts:50052", opts)
+	cc, err := grpc.Dial(os.Getenv("POSTS_ADDRESS"), opts)
 	if err != nil {
 		log.Fatalf("Could not connect: %v", err)
 	}
@@ -30,7 +31,7 @@ func PostServer() pb.PostsServiceClient {
 }
 func CommentServer() pb.CommentsServiceClient {
 	opts := grpc.WithInsecure()
-	cc, err := grpc.Dial("comments:50053", opts)
+	cc, err := grpc.Dial(os.Getenv("COMMENTS_ADDRESS"), opts)
 	if err != nil {
 		log.Fatalf("Could not connect: %v", err)
 	}
@@ -40,7 +41,7 @@ func CommentServer() pb.CommentsServiceClient {
 }
 func LikesServer() (pb.PostLikesServiceClient, pb.CommentLikesServiceClient) {
 	opts := grpc.WithInsecure()
-	cc, err := grpc.Dial("likes:50054", opts)
+	cc, err := grpc.Dial(os.Getenv("LIKES_ADDRESS"), opts)
 	if err != nil {
 		log.Fatalf("Could not connect: %v", err)
 	}
@@ -51,7 +52,7 @@ func LikesServer() (pb.PostLikesServiceClient, pb.CommentLikesServiceClient) {
 }
 func HashtagServer() (pb.HashtagsServiceClient, pb.HashtagPostsServiceClient) {
 	opts := grpc.WithInsecure()
-	cc, err := grpc.Dial("hashtags:50055", opts)
+	cc, err := grpc.Dial(os.Getenv("HASHTAGS_ADDRESS"), opts)
 	if err != nil {
 		log.Fatalf("Could not connect: %v", err)
 	}
