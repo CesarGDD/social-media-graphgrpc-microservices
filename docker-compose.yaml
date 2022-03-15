@@ -20,12 +20,14 @@ services:
       - data:/var/lib/postgresql/data
   users:
     build: ./users
+    restart: always
     ports:
       - "50051:50051"
     depends_on: 
       - postgres
   posts:
     build: ./posts
+    restart: always
     ports:
       - "50052:50052"
     depends_on: 
@@ -38,12 +40,14 @@ services:
       - postgres
   likes:
     build: ./likes
+    restart: always
     ports:
       - "50054:50054"
     depends_on: 
       - postgres
   hashtags:
     build: ./hashtag
+    restart: always
     ports:
       - "50055:50055"
     depends_on: 
@@ -64,6 +68,6 @@ services:
         POSTS_ADDRESS: posts:50052
         COMMENTS_ADDRESS: comments:50053
         LIKES_ADDRESS: likes:50054
-        USERS_HASHTAG: hashtag:50055
+        HASHTAGS_ADDRESS: hashtags:50055
 volumes: 
   data:

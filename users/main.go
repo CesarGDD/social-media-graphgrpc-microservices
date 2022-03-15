@@ -1,8 +1,8 @@
 package main
 
 import (
+	"cesargdd/users-grpc/pb"
 	"cesargdd/users-grpc/pg"
-	"cesargdd/users-grpc/userspb"
 	"context"
 	"fmt"
 	"log"
@@ -17,8 +17,8 @@ import (
 )
 
 type server struct {
-	userspb.UsersServiceServer
-	userspb.FollowersServiceServer
+	pb.UsersServiceServer
+	pb.FollowersServiceServer
 }
 
 var conn = pg.Connect()
@@ -26,7 +26,7 @@ var db = pg.New(conn)
 
 // Users
 
-func (*server) CreateUser(ctx context.Context, req *userspb.CreateUserRequest) (*userspb.CreateUserResponse, error) {
+func (*server) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb.CreateUserResponse, error) {
 	fmt.Println("Create user request")
 	userReq := req.GetUser()
 	user, err := db.CreateUser(ctx, pg.CreateUserParams{
@@ -41,8 +41,8 @@ func (*server) CreateUser(ctx context.Context, req *userspb.CreateUserRequest) (
 	if err != nil {
 		fmt.Println("Error Creating User", err)
 	}
-	return &userspb.CreateUserResponse{
-		User: &userspb.User{
+	return &pb.CreateUserResponse{
+		User: &pb.User{
 			Id:        user.Id,
 			CreatedAt: user.CreatedAt,
 			UpdatedAt: user.UpdatedAt,
@@ -55,14 +55,14 @@ func (*server) CreateUser(ctx context.Context, req *userspb.CreateUserRequest) (
 	}, nil
 }
 
-func (*server) GetUser(ctx context.Context, req *userspb.GetUserRequest) (*userspb.GetUserResponse, error) {
+func (*server) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb.GetUserResponse, error) {
 	fmt.Println("Get user request")
 	getUser, err := db.GetUserById(ctx, req.GetId())
 	if err != nil {
 		fmt.Println("Error getting the user", err)
 	}
-	return &userspb.GetUserResponse{
-		User: &userspb.User{
+	return &pb.GetUserResponse{
+		User: &pb.User{
 			Id:        getUser.Id,
 			CreatedAt: getUser.CreatedAt,
 			UpdatedAt: getUser.UpdatedAt,
@@ -74,7 +74,26 @@ func (*server) GetUser(ctx context.Context, req *userspb.GetUserRequest) (*users
 		},
 	}, nil
 }
-func (*server) UpdateUser(ctx context.Context, req *userspb.UpdateUserRequest) (*userspb.UpdateUserResponse, error) {
+func (*server) GetUserByUsername(ctx context.Context, req *pb.GetUserByUsernameRequest) (*pb.GetUserByUsernameResponse, error) {
+	fmt.Println("Get user request")
+	getUser, err := db.GetUserByUsername(ctx, req.GetUsername())
+	if err != nil {
+		fmt.Println("Error getting the user", err)
+	}
+	return &pb.GetUserByUsernameResponse{
+		User: &pb.User{
+			Id:        getUser.Id,
+			CreatedAt: getUser.CreatedAt,
+			UpdatedAt: getUser.UpdatedAt,
+			Username:  getUser.Username,
+			Bio:       getUser.Bio,
+			Email:     getUser.Email,
+			Password:  getUser.Password,
+			Avatar:    getUser.Avatar,
+		},
+	}, nil
+}
+func (*server) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest) (*pb.UpdateUserResponse, error) {
 	updateUser, err := db.UpdateUser(ctx, pg.UpdateUserParams{
 		Id:        req.GetId(),
 		Bio:       req.GetBio(),
@@ -84,8 +103,8 @@ func (*server) UpdateUser(ctx context.Context, req *userspb.UpdateUserRequest) (
 	if err != nil {
 		fmt.Println("error updating user", err)
 	}
-	return &userspb.UpdateUserResponse{
-		User: &userspb.User{
+	return &pb.UpdateUserResponse{
+		User: &pb.User{
 			Id:        updateUser.Id,
 			CreatedAt: updateUser.CreatedAt,
 			UpdatedAt: updateUser.UpdatedAt,
@@ -97,13 +116,13 @@ func (*server) UpdateUser(ctx context.Context, req *userspb.UpdateUserRequest) (
 		},
 	}, nil
 }
-func (*server) DeleteUser(ctx context.Context, req *userspb.DeleteUserRequest) (*userspb.DeleteUserResponse, error) {
+func (*server) DeleteUser(ctx context.Context, req *pb.DeleteUserRequest) (*pb.DeleteUserResponse, error) {
 	deleteUser, err := db.DeleteUser(ctx, req.GetId())
 	if err != nil {
 		fmt.Println("error deleting user", err)
 	}
-	return &userspb.DeleteUserResponse{
-		User: &userspb.User{
+	return &pb.DeleteUserResponse{
+		User: &pb.User{
 			Id:       deleteUser.Id,
 			Username: deleteUser.Username,
 			Email:    deleteUser.Email,
@@ -111,32 +130,32 @@ func (*server) DeleteUser(ctx context.Context, req *userspb.DeleteUserRequest) (
 	}, nil
 }
 
-func (*server) ListUsers(ctx context.Context, req *userspb.ListUsersRequest) (*userspb.ListUsersResponse, error) {
+func (*server) ListUsers(ctx context.Context, req *pb.ListUsersRequest) (*pb.ListUsersResponse, error) {
 	fmt.Println("List user request")
 	users, err := db.ListUsers(ctx)
 	if err != nil {
 		fmt.Println("error listing users", err)
 	}
-	data := &userspb.ListUsersResponse{}
+	data := &pb.ListUsersResponse{}
 	copier.Copy(&data.User, &users)
-	return &userspb.ListUsersResponse{
+	return &pb.ListUsersResponse{
 		User: data.User,
 	}, nil
 }
 
-func (*server) ListUsersById(ctx context.Context, req *userspb.ListUsersByIdRequest) (*userspb.ListUsersByIdResponse, error) {
+func (*server) ListUsersById(ctx context.Context, req *pb.ListUsersByIdRequest) (*pb.ListUsersByIdResponse, error) {
 	users, err := db.ListUsersById(ctx, req.GetId())
 	if err != nil {
 		fmt.Println("error listing users by id", err)
 	}
-	data := &userspb.ListUsersByIdResponse{}
+	data := &pb.ListUsersByIdResponse{}
 	copier.Copy(&data.User, &users)
-	return &userspb.ListUsersByIdResponse{
+	return &pb.ListUsersByIdResponse{
 		User: data.User,
 	}, nil
 }
 
-func (*server) CreateFollower(ctx context.Context, req *userspb.CreateFollowerRequest) (*userspb.CreateFollowerResponse, error) {
+func (*server) CreateFollower(ctx context.Context, req *pb.CreateFollowerRequest) (*pb.CreateFollowerResponse, error) {
 	createFollower, err := db.CreateFollower(ctx, pg.CreateFollowerParams{
 		LeaderId:   req.GetFollower().GetLeaderId(),
 		FollowerId: req.GetFollower().GetFollowerId(),
@@ -145,8 +164,8 @@ func (*server) CreateFollower(ctx context.Context, req *userspb.CreateFollowerRe
 	if err != nil {
 		fmt.Println("Error creating Follower", err)
 	}
-	return &userspb.CreateFollowerResponse{
-		Follower: &userspb.Follower{
+	return &pb.CreateFollowerResponse{
+		Follower: &pb.Follower{
 			Id:         createFollower.Id,
 			CreatedAt:  createFollower.CreatedAt,
 			LeaderId:   createFollower.LeaderId,
@@ -154,13 +173,13 @@ func (*server) CreateFollower(ctx context.Context, req *userspb.CreateFollowerRe
 		},
 	}, nil
 }
-func (*server) GetFollower(ctx context.Context, req *userspb.GetFollowerRequest) (*userspb.GetFollowerResponse, error) {
+func (*server) GetFollower(ctx context.Context, req *pb.GetFollowerRequest) (*pb.GetFollowerResponse, error) {
 	follower, err := db.GetFollower(ctx, req.GetId())
 	if err != nil {
 		fmt.Println("error getting Follower", err)
 	}
-	return &userspb.GetFollowerResponse{
-		Follower: &userspb.Follower{
+	return &pb.GetFollowerResponse{
+		Follower: &pb.Follower{
 			Id:         follower.Id,
 			CreatedAt:  follower.CreatedAt,
 			LeaderId:   follower.LeaderId,
@@ -168,13 +187,13 @@ func (*server) GetFollower(ctx context.Context, req *userspb.GetFollowerRequest)
 		},
 	}, nil
 }
-func (*server) DeleteFollower(ctx context.Context, req *userspb.DeleteFollowerRequest) (*userspb.DeleteFollowerResponse, error) {
+func (*server) DeleteFollower(ctx context.Context, req *pb.DeleteFollowerRequest) (*pb.DeleteFollowerResponse, error) {
 	delFollower, err := db.DeleteFollower(ctx, req.GetId())
 	if err != nil {
 		fmt.Println("Error deleting Follower", err)
 	}
-	return &userspb.DeleteFollowerResponse{
-		Follower: &userspb.Follower{
+	return &pb.DeleteFollowerResponse{
+		Follower: &pb.Follower{
 			Id:         delFollower.Id,
 			CreatedAt:  delFollower.CreatedAt,
 			LeaderId:   delFollower.LeaderId,
@@ -182,37 +201,37 @@ func (*server) DeleteFollower(ctx context.Context, req *userspb.DeleteFollowerRe
 		},
 	}, nil
 }
-func (*server) ListFollowers(ctx context.Context, req *userspb.ListFollowersRequest) (*userspb.ListFollowersResponse, error) {
+func (*server) ListFollowers(ctx context.Context, req *pb.ListFollowersRequest) (*pb.ListFollowersResponse, error) {
 	Followers, err := db.ListFollowers(ctx)
 	if err != nil {
 		fmt.Println("Error listing Followers", err)
 	}
-	data := &userspb.ListFollowersResponse{}
+	data := &pb.ListFollowersResponse{}
 	copier.Copy(&data.Follower, &Followers)
-	return &userspb.ListFollowersResponse{
+	return &pb.ListFollowersResponse{
 		Follower: data.Follower,
 	}, nil
 }
-func (*server) ListFollowersById(ctx context.Context, req *userspb.ListFollowersByIdRequest) (*userspb.ListFollowersByIdResponse, error) {
+func (*server) ListFollowersById(ctx context.Context, req *pb.ListFollowersByIdRequest) (*pb.ListFollowersByIdResponse, error) {
 	Followers, err := db.ListFollowersById(ctx, req.GetId())
 	if err != nil {
 		fmt.Println("Error listing Followers", err)
 	}
-	data := &userspb.ListFollowersByIdResponse{}
+	data := &pb.ListFollowersByIdResponse{}
 	copier.Copy(&data.Follower, &Followers)
-	return &userspb.ListFollowersByIdResponse{
+	return &pb.ListFollowersByIdResponse{
 		Follower: data.Follower,
 	}, nil
 }
 
-func (*server) ListFollowersByLeaderId(ctx context.Context, req *userspb.ListFollowersByLeaderIdRequest) (*userspb.ListFollowersByLeaderIdResponse, error) {
+func (*server) ListFollowersByLeaderId(ctx context.Context, req *pb.ListFollowersByLeaderIdRequest) (*pb.ListFollowersByLeaderIdResponse, error) {
 	Followers, err := db.ListFollowersByLeaderId(ctx, req.GetLeaderId())
 	if err != nil {
 		fmt.Println("Error listing Followers", err)
 	}
-	data := &userspb.ListFollowersByLeaderIdResponse{}
+	data := &pb.ListFollowersByLeaderIdResponse{}
 	copier.Copy(&data.Follower, &Followers)
-	return &userspb.ListFollowersByLeaderIdResponse{
+	return &pb.ListFollowersByLeaderIdResponse{
 		Follower: data.Follower,
 	}, nil
 }
@@ -234,8 +253,8 @@ func main() {
 	opts := []grpc.ServerOption{}
 
 	s := grpc.NewServer(opts...)
-	userspb.RegisterUsersServiceServer(s, &server{})
-	userspb.RegisterFollowersServiceServer(s, &server{})
+	pb.RegisterUsersServiceServer(s, &server{})
+	pb.RegisterFollowersServiceServer(s, &server{})
 
 	//Register reflection service on gRPC server
 	reflection.Register(s)

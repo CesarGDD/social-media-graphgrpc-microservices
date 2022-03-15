@@ -1,0 +1,137 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "/pb";
+
+// Hashtag
+
+message Hashtag {
+    int32 id = 1;
+    int64 created_at = 2;
+    string title = 3;
+}
+
+message CreateHashtagRequest {
+    Hashtag hashtag = 1;
+}
+
+message CreateHashtagResponse {
+    Hashtag hashtag = 1;
+}
+
+message GetHashtagByTitleRequest {
+    string title = 1;
+}
+
+message GetHashtagByTitleResponse {
+    Hashtag hashtag = 1;
+}
+
+message GetHashtagRequest {
+    int32 id = 1;
+}
+
+message GetHashtagResponse {
+    Hashtag hashtag = 1;
+}
+
+message UpdateHashtagRequest {
+    int32 id = 1;
+    string title = 2;
+}
+
+message UpdateHashtagResponse {
+    Hashtag hashtag = 1;
+}
+
+
+message DeleteHashtagRequest {
+    int32 id = 1;
+}
+
+message DeleteHashtagResponse {
+    Hashtag hashtag = 1;
+}
+
+message ListHashtagsRequest {
+
+}
+
+message ListHashtagsResponse {
+    repeated Hashtag hashtag = 1;
+}
+
+message ListHashtagsByIdRequest {
+    int32 id = 1;
+}
+
+message ListHashtagsByIdResponse {
+    repeated Hashtag hashtag = 1;
+}
+
+service HashtagsService {
+    rpc CreateHashtag (CreateHashtagRequest) returns (CreateHashtagResponse);
+    rpc GetHashtagByTitle (GetHashtagByTitleRequest) returns (GetHashtagByTitleResponse);
+    rpc GetHashtag (GetHashtagRequest) returns (GetHashtagResponse);
+    rpc UpdateHashtag (UpdateHashtagRequest) returns (UpdateHashtagResponse);
+    rpc DeleteHashtag (DeleteHashtagRequest) returns (DeleteHashtagResponse);
+    rpc ListHashtags (ListHashtagsRequest) returns (ListHashtagsResponse);
+    rpc ListHashtagsById (ListHashtagsByIdRequest) returns (ListHashtagsByIdResponse);
+}
+
+// HashtagPost
+
+message HashtagPost {
+    int32 id = 1;
+    int32 hashtag_id = 2;
+    int32 post_id = 3;
+}
+
+message CreateHashtagPostRequest {
+    HashtagPost hashtagPost = 1;
+}
+
+message CreateHashtagPostResponse {
+    HashtagPost hashtagPost = 1;
+}
+
+message GetHashtagPostRequest {
+    int32 id = 1;
+}
+
+message GetHashtagPostResponse {
+    HashtagPost hashtagPost = 1;
+}
+
+message DeleteHashtagPostRequest {
+    int32 id = 1;
+}
+
+message DeleteHashtagPostResponse {
+    HashtagPost hashtagPost = 1;
+}
+
+message ListHashtagPostsRequest {
+
+}
+
+message ListHashtagPostsResponse {
+    repeated HashtagPost hashtagPost = 1;
+}
+
+message ListHashtagPostsByIdRequest {
+    int32 id = 1;
+}
+
+message ListHashtagPostsByIdResponse {
+    repeated HashtagPost hashtagPost = 1;
+}
+
+service HashtagPostsService {
+    rpc CreateHashtagPost (CreateHashtagPostRequest) returns (CreateHashtagPostResponse);
+    rpc GetHashtagPost (GetHashtagPostRequest) returns (GetHashtagPostResponse);
+    rpc DeleteHashtagPost (DeleteHashtagPostRequest) returns (DeleteHashtagPostResponse);
+    rpc ListHashtagPosts (ListHashtagPostsRequest) returns (ListHashtagPostsResponse);
+    rpc ListHashtagPostsById (ListHashtagPostsByIdRequest) returns (ListHashtagPostsByIdResponse);
+}

@@ -1,8 +1,8 @@
 package main
 
 import (
+	"cesargdd/posts-grpc/pb"
 	"cesargdd/posts-grpc/pg"
-	"cesargdd/posts-grpc/postspb"
 	"context"
 	"fmt"
 	"log"
@@ -17,7 +17,7 @@ import (
 )
 
 type server struct {
-	postspb.PostsServiceServer
+	pb.PostsServiceServer
 }
 
 var conn = pg.Connect()
@@ -25,7 +25,8 @@ var db = pg.New(conn)
 
 // Posts
 
-func (*server) CreatePost(ctx context.Context, req *postspb.CreatePostRequest) (*postspb.CreatePostResponse, error) {
+func (*server) CreatePost(ctx context.Context, req *pb.CreatePostRequest) (*pb.CreatePostResponse, error) {
+	fmt.Println("Create post request")
 	postReq := req.GetPost()
 	createPost, err := db.CreatePost(ctx, pg.CreatePostParams{
 		Caption:   postReq.GetCaption(),
@@ -37,8 +38,8 @@ func (*server) CreatePost(ctx context.Context, req *postspb.CreatePostRequest) (
 	if err != nil {
 		fmt.Println("error creating Post", err)
 	}
-	return &postspb.CreatePostResponse{
-		Post: &postspb.Post{
+	return &pb.CreatePostResponse{
+		Post: &pb.Post{
 			Id:        createPost.Id,
 			CreatedAt: createPost.CreatedAt,
 			UpdatedAt: createPost.UpdatedAt,
@@ -48,13 +49,13 @@ func (*server) CreatePost(ctx context.Context, req *postspb.CreatePostRequest) (
 		},
 	}, nil
 }
-func (*server) GetPost(ctx context.Context, req *postspb.GetPostRequest) (*postspb.GetPostResponse, error) {
+func (*server) GetPost(ctx context.Context, req *pb.GetPostRequest) (*pb.GetPostResponse, error) {
 	post, err := db.GetPost(ctx, req.GetId())
 	if err != nil {
 		fmt.Println("Error getting Post", err)
 	}
-	return &postspb.GetPostResponse{
-		Post: &postspb.Post{
+	return &pb.GetPostResponse{
+		Post: &pb.Post{
 			Id:        post.Id,
 			CreatedAt: post.CreatedAt,
 			UpdatedAt: post.UpdatedAt,
@@ -64,7 +65,7 @@ func (*server) GetPost(ctx context.Context, req *postspb.GetPostRequest) (*posts
 		},
 	}, nil
 }
-func (*server) UpdatePost(ctx context.Context, req *postspb.UpdatePostRequest) (*postspb.UpdatePostResponse, error) {
+func (*server) UpdatePost(ctx context.Context, req *pb.UpdatePostRequest) (*pb.UpdatePostResponse, error) {
 	updatePost, err := db.UpdatePost(ctx, pg.UpdatePostParams{
 		Id:        req.GetPostId(),
 		Url:       req.GetUrl(),
@@ -74,8 +75,8 @@ func (*server) UpdatePost(ctx context.Context, req *postspb.UpdatePostRequest) (
 	if err != nil {
 		fmt.Println("Error updating Post")
 	}
-	return &postspb.UpdatePostResponse{
-		Post: &postspb.Post{
+	return &pb.UpdatePostResponse{
+		Post: &pb.Post{
 			Id:        updatePost.Id,
 			CreatedAt: updatePost.CreatedAt,
 			UpdatedAt: updatePost.UpdatedAt,
@@ -85,13 +86,13 @@ func (*server) UpdatePost(ctx context.Context, req *postspb.UpdatePostRequest) (
 		},
 	}, nil
 }
-func (*server) DeletePost(ctx context.Context, req *postspb.DeletePostRequest) (*postspb.DeletePostResponse, error) {
+func (*server) DeletePost(ctx context.Context, req *pb.DeletePostRequest) (*pb.DeletePostResponse, error) {
 	delPost, err := db.DeletePost(ctx, req.GetId())
 	if err != nil {
 		fmt.Println("Error deleting Post")
 	}
-	return &postspb.DeletePostResponse{
-		Post: &postspb.Post{
+	return &pb.DeletePostResponse{
+		Post: &pb.Post{
 			Id:        delPost.Id,
 			CreatedAt: delPost.CreatedAt,
 			UpdatedAt: delPost.UpdatedAt,
@@ -101,38 +102,39 @@ func (*server) DeletePost(ctx context.Context, req *postspb.DeletePostRequest) (
 		},
 	}, nil
 }
-func (*server) ListPosts(ctx context.Context, req *postspb.ListPostsRequest) (*postspb.ListPostsResponse, error) {
+func (*server) ListPosts(ctx context.Context, req *pb.ListPostsRequest) (*pb.ListPostsResponse, error) {
+	fmt.Println("List posts request")
 	listPost, err := db.ListPosts(ctx)
 	if err != nil {
 		fmt.Println("Error getting Posts")
 	}
-	data := &postspb.ListPostsResponse{}
+	data := &pb.ListPostsResponse{}
 	copier.Copy(&data.Post, &listPost)
-	return &postspb.ListPostsResponse{
+	return &pb.ListPostsResponse{
 		Post: data.Post,
 	}, nil
 }
 
-func (*server) ListPostsById(ctx context.Context, req *postspb.ListPostsByIdRequest) (*postspb.ListPostsByIdResponse, error) {
+func (*server) ListPostsById(ctx context.Context, req *pb.ListPostsByIdRequest) (*pb.ListPostsByIdResponse, error) {
 	listPost, err := db.ListPostsById(ctx, req.GetId())
 	if err != nil {
 		fmt.Println("Error getting Posts")
 	}
-	data := &postspb.ListPostsByIdResponse{}
+	data := &pb.ListPostsByIdResponse{}
 	copier.Copy(&data.Post, &listPost)
-	return &postspb.ListPostsByIdResponse{
+	return &pb.ListPostsByIdResponse{
 		Post: data.Post,
 	}, nil
 }
 
-func (*server) ListPostsByUserId(ctx context.Context, req *postspb.ListPostsByUserIdRequest) (*postspb.ListPostsByUserIdResponse, error) {
+func (*server) ListPostsByUserId(ctx context.Context, req *pb.ListPostsByUserIdRequest) (*pb.ListPostsByUserIdResponse, error) {
 	listPost, err := db.ListPostsByUserId(ctx, req.GetUserId())
 	if err != nil {
 		fmt.Println("Error getting Posts")
 	}
-	data := &postspb.ListPostsByUserIdResponse{}
+	data := &pb.ListPostsByUserIdResponse{}
 	copier.Copy(&data.Post, &listPost)
-	return &postspb.ListPostsByUserIdResponse{
+	return &pb.ListPostsByUserIdResponse{
 		Post: data.Post,
 	}, nil
 }
@@ -154,7 +156,7 @@ func main() {
 	opts := []grpc.ServerOption{}
 
 	s := grpc.NewServer(opts...)
-	postspb.RegisterPostsServiceServer(s, &server{})
+	pb.RegisterPostsServiceServer(s, &server{})
 
 	//Register reflection service on gRPC server
 	reflection.Register(s)

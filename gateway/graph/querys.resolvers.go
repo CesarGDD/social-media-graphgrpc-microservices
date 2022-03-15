@@ -11,12 +11,6 @@ import (
 	"fmt"
 )
 
-var u, f = servers.UserServer()
-var p = servers.PostServer()
-var c = servers.CommentServer()
-var pl, cl = servers.LikesServer()
-var h, hp = servers.HashtagServer()
-
 func (r *queryResolver) User(ctx context.Context, id int) (*pb.User, error) {
 	res, err := u.GetUser(ctx, &pb.GetUserRequest{Id: int32(id)})
 	if err != nil {
@@ -36,7 +30,21 @@ func (r *queryResolver) User(ctx context.Context, id int) (*pb.User, error) {
 }
 
 func (r *queryResolver) UserByUsername(ctx context.Context, username string) (*pb.User, error) {
-	panic(fmt.Errorf("not implemented"))
+	res, err := u.GetUserByUsername(ctx, &pb.GetUserByUsernameRequest{Username: username})
+	if err != nil {
+		fmt.Println(err)
+	}
+	user := res.User
+	return &pb.User{
+		Id:        user.Id,
+		CreatedAt: user.CreatedAt,
+		UpdatedAt: user.CreatedAt,
+		Username:  user.Username,
+		Bio:       user.Bio,
+		Email:     user.Email,
+		Password:  user.Password,
+		Avatar:    user.Avatar,
+	}, nil
 }
 
 func (r *queryResolver) Users(ctx context.Context) ([]*pb.User, error) {
@@ -64,6 +72,7 @@ func (r *queryResolver) Post(ctx context.Context, id int) (*pb.Post, error) {
 }
 
 func (r *queryResolver) Posts(ctx context.Context) ([]*pb.Post, error) {
+	fmt.Println("list posts request")
 	res, err := p.ListPosts(ctx, &pb.ListPostsRequest{})
 	if err != nil {
 		fmt.Println(err)
@@ -85,6 +94,14 @@ func (r *queryResolver) Comment(ctx context.Context, id int) (*pb.Comment, error
 		UserId:    comment.UserId,
 		PostId:    comment.PostId,
 	}, nil
+}
+
+func (r *queryResolver) CommentsByPostID(ctx context.Context, id int) ([]*pb.Comment, error) {
+	res, err := c.ListCommentsByPostId(ctx, &pb.ListCommentsByPostIdRequest{PostId: int32(id)})
+	if err != nil {
+		fmt.Println(err)
+	}
+	return res.Comment, nil
 }
 
 func (r *queryResolver) Comments(ctx context.Context) ([]*pb.Comment, error) {
@@ -117,6 +134,16 @@ func (r *queryResolver) PostLikes(ctx context.Context) ([]*pb.PostLike, error) {
 	return res.PostLike, nil
 }
 
+func (r *queryResolver) PostLikeByPostID(ctx context.Context, postID int) ([]*pb.PostLike, error) {
+	res, err := pl.ListPostLikesByPostId(ctx, &pb.ListPostLikesByPostIdRequest{
+		PostId: int32(postID),
+	})
+	if err != nil {
+		fmt.Println(err)
+	}
+	return res.PostLike, nil
+}
+
 func (r *queryResolver) CommentLike(ctx context.Context, id int) (*pb.CommentLike, error) {
 	res, err := cl.GetCommentLike(ctx, &pb.GetCommentLikeRequest{Id: int32(id)})
 	if err != nil {
@@ -133,6 +160,14 @@ func (r *queryResolver) CommentLike(ctx context.Context, id int) (*pb.CommentLik
 
 func (r *queryResolver) CommentLikes(ctx context.Context) ([]*pb.CommentLike, error) {
 	res, err := cl.ListCommentLikes(ctx, &pb.ListCommentLikesRequest{})
+	if err != nil {
+		fmt.Println(err)
+	}
+	return res.CommentLike, nil
+}
+
+func (r *queryResolver) CommentLikeByCommentID(ctx context.Context, commentID int) ([]*pb.CommentLike, error) {
+	res, err := cl.ListCommentLikesByCommentId(ctx, &pb.ListCommentLikesByCommentIdRequest{CommentId: int32(commentID)})
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -220,3 +255,19 @@ func (r *queryResolver) Followers(ctx context.Context) ([]*pb.Follower, error) {
 func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 
 type queryResolver struct{ *Resolver }
+
+// !!! WARNING !!!
+// The code below was going to be deleted when updating resolvers. It has been copied here so you have
+// one last chance to move it out of harms way if you want. There are two reasons this happens:
+//  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
+//    it when you're done.
+//  - You have helper methods in this file. Move them out to keep these resolver files clean.
+var u, f = servers.UserServer()
+var p = servers.PostServer()
+var c = servers.CommentServer()
+var pl, cl = servers.LikeServer()
+var h, hp = servers.HashtagServer()
+
+func (r *queryResolver) CommentsByCommentID(ctx context.Context, id int) ([]*pb.Comment, error) {
+	panic(fmt.Errorf("not implemented"))
+}

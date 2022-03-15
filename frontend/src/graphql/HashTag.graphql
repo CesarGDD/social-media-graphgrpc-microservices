@@ -1,0 +1,37 @@
+query HashtagByTitle($title: String!) {
+  hashtagByTitle(title: $title) {
+    id
+    created_at
+    title
+  }
+}
+
+query HashTagsPosts {
+  hashtagsPost {
+    id
+    hashtag_id
+    post_id
+    posts {
+      id
+      url
+      caption
+    }
+  }
+}
+
+# Mutations
+
+mutation CreateHastag($input: NewHashtag) {
+  createHashtag(input: $input) {
+    id
+    title
+  }
+}
+
+mutation Mutation($input: NewHashtagPost) {
+  createHashtagPost(input: $input) {
+    id
+    hashtag_id
+    post_id
+  }
+}

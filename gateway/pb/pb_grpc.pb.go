@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion7
 type UsersServiceClient interface {
 	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error)
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
+	GetUserByUsername(ctx context.Context, in *GetUserByUsernameRequest, opts ...grpc.CallOption) (*GetUserByUsernameResponse, error)
 	UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UpdateUserResponse, error)
 	DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*DeleteUserResponse, error)
 	ListUsers(ctx context.Context, in *ListUsersRequest, opts ...grpc.CallOption) (*ListUsersResponse, error)
@@ -46,6 +47,15 @@ func (c *usersServiceClient) CreateUser(ctx context.Context, in *CreateUserReque
 func (c *usersServiceClient) GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error) {
 	out := new(GetUserResponse)
 	err := c.cc.Invoke(ctx, "/pb.UsersService/GetUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *usersServiceClient) GetUserByUsername(ctx context.Context, in *GetUserByUsernameRequest, opts ...grpc.CallOption) (*GetUserByUsernameResponse, error) {
+	out := new(GetUserByUsernameResponse)
+	err := c.cc.Invoke(ctx, "/pb.UsersService/GetUserByUsername", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -94,6 +104,7 @@ func (c *usersServiceClient) ListUsersById(ctx context.Context, in *ListUsersByI
 type UsersServiceServer interface {
 	CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error)
 	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
+	GetUserByUsername(context.Context, *GetUserByUsernameRequest) (*GetUserByUsernameResponse, error)
 	UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error)
 	DeleteUser(context.Context, *DeleteUserRequest) (*DeleteUserResponse, error)
 	ListUsers(context.Context, *ListUsersRequest) (*ListUsersResponse, error)
@@ -110,6 +121,9 @@ func (UnimplementedUsersServiceServer) CreateUser(context.Context, *CreateUserRe
 }
 func (UnimplementedUsersServiceServer) GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUser not implemented")
+}
+func (UnimplementedUsersServiceServer) GetUserByUsername(context.Context, *GetUserByUsernameRequest) (*GetUserByUsernameResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserByUsername not implemented")
 }
 func (UnimplementedUsersServiceServer) UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateUser not implemented")
@@ -168,6 +182,24 @@ func _UsersService_GetUser_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UsersServiceServer).GetUser(ctx, req.(*GetUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UsersService_GetUserByUsername_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserByUsernameRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UsersServiceServer).GetUserByUsername(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.UsersService/GetUserByUsername",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UsersServiceServer).GetUserByUsername(ctx, req.(*GetUserByUsernameRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -258,6 +290,10 @@ var UsersService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetUser",
 			Handler:    _UsersService_GetUser_Handler,
+		},
+		{
+			MethodName: "GetUserByUsername",
+			Handler:    _UsersService_GetUserByUsername_Handler,
 		},
 		{
 			MethodName: "UpdateUser",
@@ -890,7 +926,8 @@ var CommentsService_ServiceDesc = grpc.ServiceDesc{
 type PostLikesServiceClient interface {
 	CreatePostLike(ctx context.Context, in *CreatePostLikeRequest, opts ...grpc.CallOption) (*CreatePostLikeResponse, error)
 	GetPostLike(ctx context.Context, in *GetPostLikeRequest, opts ...grpc.CallOption) (*GetPostLikeResponse, error)
-	DeletePostLike(ctx context.Context, in *DeletePostLikeRequest, opts ...grpc.CallOption) (*DeletePostLikeResponse, error)
+	DeletePostLikeById(ctx context.Context, in *DeletePostLikeByIdRequest, opts ...grpc.CallOption) (*DeletePostLikeByIdResponse, error)
+	DeletePostLikeByUserId(ctx context.Context, in *DeletePostLikeByUserIdRequest, opts ...grpc.CallOption) (*DeletePostLikeByUserIdResponse, error)
 	ListPostLikes(ctx context.Context, in *ListPostLikesRequest, opts ...grpc.CallOption) (*ListPostLikesResponse, error)
 	ListPostLikesById(ctx context.Context, in *ListPostLikesByIdRequest, opts ...grpc.CallOption) (*ListPostLikesByIdResponse, error)
 	ListPostLikesByPostId(ctx context.Context, in *ListPostLikesByPostIdRequest, opts ...grpc.CallOption) (*ListPostLikesByPostIdResponse, error)
@@ -922,9 +959,18 @@ func (c *postLikesServiceClient) GetPostLike(ctx context.Context, in *GetPostLik
 	return out, nil
 }
 
-func (c *postLikesServiceClient) DeletePostLike(ctx context.Context, in *DeletePostLikeRequest, opts ...grpc.CallOption) (*DeletePostLikeResponse, error) {
-	out := new(DeletePostLikeResponse)
-	err := c.cc.Invoke(ctx, "/pb.PostLikesService/DeletePostLike", in, out, opts...)
+func (c *postLikesServiceClient) DeletePostLikeById(ctx context.Context, in *DeletePostLikeByIdRequest, opts ...grpc.CallOption) (*DeletePostLikeByIdResponse, error) {
+	out := new(DeletePostLikeByIdResponse)
+	err := c.cc.Invoke(ctx, "/pb.PostLikesService/DeletePostLikeById", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *postLikesServiceClient) DeletePostLikeByUserId(ctx context.Context, in *DeletePostLikeByUserIdRequest, opts ...grpc.CallOption) (*DeletePostLikeByUserIdResponse, error) {
+	out := new(DeletePostLikeByUserIdResponse)
+	err := c.cc.Invoke(ctx, "/pb.PostLikesService/DeletePostLikeByUserId", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -964,7 +1010,8 @@ func (c *postLikesServiceClient) ListPostLikesByPostId(ctx context.Context, in *
 type PostLikesServiceServer interface {
 	CreatePostLike(context.Context, *CreatePostLikeRequest) (*CreatePostLikeResponse, error)
 	GetPostLike(context.Context, *GetPostLikeRequest) (*GetPostLikeResponse, error)
-	DeletePostLike(context.Context, *DeletePostLikeRequest) (*DeletePostLikeResponse, error)
+	DeletePostLikeById(context.Context, *DeletePostLikeByIdRequest) (*DeletePostLikeByIdResponse, error)
+	DeletePostLikeByUserId(context.Context, *DeletePostLikeByUserIdRequest) (*DeletePostLikeByUserIdResponse, error)
 	ListPostLikes(context.Context, *ListPostLikesRequest) (*ListPostLikesResponse, error)
 	ListPostLikesById(context.Context, *ListPostLikesByIdRequest) (*ListPostLikesByIdResponse, error)
 	ListPostLikesByPostId(context.Context, *ListPostLikesByPostIdRequest) (*ListPostLikesByPostIdResponse, error)
@@ -981,8 +1028,11 @@ func (UnimplementedPostLikesServiceServer) CreatePostLike(context.Context, *Crea
 func (UnimplementedPostLikesServiceServer) GetPostLike(context.Context, *GetPostLikeRequest) (*GetPostLikeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPostLike not implemented")
 }
-func (UnimplementedPostLikesServiceServer) DeletePostLike(context.Context, *DeletePostLikeRequest) (*DeletePostLikeResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeletePostLike not implemented")
+func (UnimplementedPostLikesServiceServer) DeletePostLikeById(context.Context, *DeletePostLikeByIdRequest) (*DeletePostLikeByIdResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeletePostLikeById not implemented")
+}
+func (UnimplementedPostLikesServiceServer) DeletePostLikeByUserId(context.Context, *DeletePostLikeByUserIdRequest) (*DeletePostLikeByUserIdResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeletePostLikeByUserId not implemented")
 }
 func (UnimplementedPostLikesServiceServer) ListPostLikes(context.Context, *ListPostLikesRequest) (*ListPostLikesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListPostLikes not implemented")
@@ -1042,20 +1092,38 @@ func _PostLikesService_GetPostLike_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PostLikesService_DeletePostLike_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeletePostLikeRequest)
+func _PostLikesService_DeletePostLikeById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeletePostLikeByIdRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PostLikesServiceServer).DeletePostLike(ctx, in)
+		return srv.(PostLikesServiceServer).DeletePostLikeById(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.PostLikesService/DeletePostLike",
+		FullMethod: "/pb.PostLikesService/DeletePostLikeById",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PostLikesServiceServer).DeletePostLike(ctx, req.(*DeletePostLikeRequest))
+		return srv.(PostLikesServiceServer).DeletePostLikeById(ctx, req.(*DeletePostLikeByIdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PostLikesService_DeletePostLikeByUserId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeletePostLikeByUserIdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostLikesServiceServer).DeletePostLikeByUserId(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.PostLikesService/DeletePostLikeByUserId",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostLikesServiceServer).DeletePostLikeByUserId(ctx, req.(*DeletePostLikeByUserIdRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1130,8 +1198,12 @@ var PostLikesService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _PostLikesService_GetPostLike_Handler,
 		},
 		{
-			MethodName: "DeletePostLike",
-			Handler:    _PostLikesService_DeletePostLike_Handler,
+			MethodName: "DeletePostLikeById",
+			Handler:    _PostLikesService_DeletePostLikeById_Handler,
+		},
+		{
+			MethodName: "DeletePostLikeByUserId",
+			Handler:    _PostLikesService_DeletePostLikeByUserId_Handler,
 		},
 		{
 			MethodName: "ListPostLikes",
@@ -1156,7 +1228,8 @@ var PostLikesService_ServiceDesc = grpc.ServiceDesc{
 type CommentLikesServiceClient interface {
 	CreateCommentLike(ctx context.Context, in *CreateCommentLikeRequest, opts ...grpc.CallOption) (*CreateCommentLikeResponse, error)
 	GetCommentLike(ctx context.Context, in *GetCommentLikeRequest, opts ...grpc.CallOption) (*GetCommentLikeResponse, error)
-	DeleteCommentLike(ctx context.Context, in *DeleteCommentLikeRequest, opts ...grpc.CallOption) (*DeleteCommentLikeResponse, error)
+	DeleteCommentLikeById(ctx context.Context, in *DeleteCommentLikeByIdRequest, opts ...grpc.CallOption) (*DeleteCommentLikeByIdResponse, error)
+	DeleteCommentLikeByUserId(ctx context.Context, in *DeleteCommentLikeByUserIdRequest, opts ...grpc.CallOption) (*DeleteCommentLikeByUserIdResponse, error)
 	ListCommentLikes(ctx context.Context, in *ListCommentLikesRequest, opts ...grpc.CallOption) (*ListCommentLikesResponse, error)
 	ListCommentLikesById(ctx context.Context, in *ListCommentLikesByIdRequest, opts ...grpc.CallOption) (*ListCommentLikesByIdResponse, error)
 	ListCommentLikesByCommentId(ctx context.Context, in *ListCommentLikesByCommentIdRequest, opts ...grpc.CallOption) (*ListCommentLikesByCommentIdResponse, error)
@@ -1188,9 +1261,18 @@ func (c *commentLikesServiceClient) GetCommentLike(ctx context.Context, in *GetC
 	return out, nil
 }
 
-func (c *commentLikesServiceClient) DeleteCommentLike(ctx context.Context, in *DeleteCommentLikeRequest, opts ...grpc.CallOption) (*DeleteCommentLikeResponse, error) {
-	out := new(DeleteCommentLikeResponse)
-	err := c.cc.Invoke(ctx, "/pb.CommentLikesService/DeleteCommentLike", in, out, opts...)
+func (c *commentLikesServiceClient) DeleteCommentLikeById(ctx context.Context, in *DeleteCommentLikeByIdRequest, opts ...grpc.CallOption) (*DeleteCommentLikeByIdResponse, error) {
+	out := new(DeleteCommentLikeByIdResponse)
+	err := c.cc.Invoke(ctx, "/pb.CommentLikesService/DeleteCommentLikeById", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *commentLikesServiceClient) DeleteCommentLikeByUserId(ctx context.Context, in *DeleteCommentLikeByUserIdRequest, opts ...grpc.CallOption) (*DeleteCommentLikeByUserIdResponse, error) {
+	out := new(DeleteCommentLikeByUserIdResponse)
+	err := c.cc.Invoke(ctx, "/pb.CommentLikesService/DeleteCommentLikeByUserId", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1230,7 +1312,8 @@ func (c *commentLikesServiceClient) ListCommentLikesByCommentId(ctx context.Cont
 type CommentLikesServiceServer interface {
 	CreateCommentLike(context.Context, *CreateCommentLikeRequest) (*CreateCommentLikeResponse, error)
 	GetCommentLike(context.Context, *GetCommentLikeRequest) (*GetCommentLikeResponse, error)
-	DeleteCommentLike(context.Context, *DeleteCommentLikeRequest) (*DeleteCommentLikeResponse, error)
+	DeleteCommentLikeById(context.Context, *DeleteCommentLikeByIdRequest) (*DeleteCommentLikeByIdResponse, error)
+	DeleteCommentLikeByUserId(context.Context, *DeleteCommentLikeByUserIdRequest) (*DeleteCommentLikeByUserIdResponse, error)
 	ListCommentLikes(context.Context, *ListCommentLikesRequest) (*ListCommentLikesResponse, error)
 	ListCommentLikesById(context.Context, *ListCommentLikesByIdRequest) (*ListCommentLikesByIdResponse, error)
 	ListCommentLikesByCommentId(context.Context, *ListCommentLikesByCommentIdRequest) (*ListCommentLikesByCommentIdResponse, error)
@@ -1247,8 +1330,11 @@ func (UnimplementedCommentLikesServiceServer) CreateCommentLike(context.Context,
 func (UnimplementedCommentLikesServiceServer) GetCommentLike(context.Context, *GetCommentLikeRequest) (*GetCommentLikeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCommentLike not implemented")
 }
-func (UnimplementedCommentLikesServiceServer) DeleteCommentLike(context.Context, *DeleteCommentLikeRequest) (*DeleteCommentLikeResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteCommentLike not implemented")
+func (UnimplementedCommentLikesServiceServer) DeleteCommentLikeById(context.Context, *DeleteCommentLikeByIdRequest) (*DeleteCommentLikeByIdResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteCommentLikeById not implemented")
+}
+func (UnimplementedCommentLikesServiceServer) DeleteCommentLikeByUserId(context.Context, *DeleteCommentLikeByUserIdRequest) (*DeleteCommentLikeByUserIdResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteCommentLikeByUserId not implemented")
 }
 func (UnimplementedCommentLikesServiceServer) ListCommentLikes(context.Context, *ListCommentLikesRequest) (*ListCommentLikesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListCommentLikes not implemented")
@@ -1308,20 +1394,38 @@ func _CommentLikesService_GetCommentLike_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
-func _CommentLikesService_DeleteCommentLike_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteCommentLikeRequest)
+func _CommentLikesService_DeleteCommentLikeById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteCommentLikeByIdRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CommentLikesServiceServer).DeleteCommentLike(ctx, in)
+		return srv.(CommentLikesServiceServer).DeleteCommentLikeById(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.CommentLikesService/DeleteCommentLike",
+		FullMethod: "/pb.CommentLikesService/DeleteCommentLikeById",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CommentLikesServiceServer).DeleteCommentLike(ctx, req.(*DeleteCommentLikeRequest))
+		return srv.(CommentLikesServiceServer).DeleteCommentLikeById(ctx, req.(*DeleteCommentLikeByIdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CommentLikesService_DeleteCommentLikeByUserId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteCommentLikeByUserIdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CommentLikesServiceServer).DeleteCommentLikeByUserId(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.CommentLikesService/DeleteCommentLikeByUserId",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CommentLikesServiceServer).DeleteCommentLikeByUserId(ctx, req.(*DeleteCommentLikeByUserIdRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1396,8 +1500,12 @@ var CommentLikesService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _CommentLikesService_GetCommentLike_Handler,
 		},
 		{
-			MethodName: "DeleteCommentLike",
-			Handler:    _CommentLikesService_DeleteCommentLike_Handler,
+			MethodName: "DeleteCommentLikeById",
+			Handler:    _CommentLikesService_DeleteCommentLikeById_Handler,
+		},
+		{
+			MethodName: "DeleteCommentLikeByUserId",
+			Handler:    _CommentLikesService_DeleteCommentLikeByUserId_Handler,
 		},
 		{
 			MethodName: "ListCommentLikes",

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"cesargdd/grpc-hashtags/hashtagspb"
+	"cesargdd/grpc-hashtags/pb"
 	"cesargdd/grpc-hashtags/pg"
 	"context"
 	"fmt"
@@ -17,8 +17,8 @@ import (
 )
 
 type server struct {
-	hashtagspb.HashtagsServiceServer
-	hashtagspb.HashtagPostsServiceServer
+	pb.HashtagsServiceServer
+	pb.HashtagPostsServiceServer
 }
 
 var conn = pg.Connect()
@@ -26,7 +26,7 @@ var db = pg.New(conn)
 
 // Hashtag
 
-func (*server) CreateHashtag(ctx context.Context, req *hashtagspb.CreateHashtagRequest) (*hashtagspb.CreateHashtagResponse, error) {
+func (*server) CreateHashtag(ctx context.Context, req *pb.CreateHashtagRequest) (*pb.CreateHashtagResponse, error) {
 	createHashtag, err := db.CreateHashtag(ctx, pg.CreateHashtagParams{
 		Title:     req.GetHashtag().GetTitle(),
 		CreatedAt: time.Now().Unix(),
@@ -34,41 +34,41 @@ func (*server) CreateHashtag(ctx context.Context, req *hashtagspb.CreateHashtagR
 	if err != nil {
 		fmt.Println("Error creating Hashtag", err)
 	}
-	return &hashtagspb.CreateHashtagResponse{
-		Hashtag: &hashtagspb.Hashtag{
+	return &pb.CreateHashtagResponse{
+		Hashtag: &pb.Hashtag{
 			Id:        createHashtag.Id,
 			CreatedAt: createHashtag.CreatedAt,
 			Title:     createHashtag.Title,
 		},
 	}, nil
 }
-func (*server) GetHashtagByTitle(ctx context.Context, req *hashtagspb.GetHashtagByTitleRequest) (*hashtagspb.GetHashtagByTitleResponse, error) {
+func (*server) GetHashtagByTitle(ctx context.Context, req *pb.GetHashtagByTitleRequest) (*pb.GetHashtagByTitleResponse, error) {
 	hashtag, err := db.GetHashtagByTitle(ctx, req.GetTitle())
 	if err != nil {
 		fmt.Println("Can not get Hashtag", err)
 	}
-	return &hashtagspb.GetHashtagByTitleResponse{
-		Hashtag: &hashtagspb.Hashtag{
+	return &pb.GetHashtagByTitleResponse{
+		Hashtag: &pb.Hashtag{
 			Id:        hashtag.Id,
 			CreatedAt: hashtag.CreatedAt,
 			Title:     hashtag.Title,
 		},
 	}, nil
 }
-func (*server) GetHashtag(ctx context.Context, req *hashtagspb.GetHashtagRequest) (*hashtagspb.GetHashtagResponse, error) {
+func (*server) GetHashtag(ctx context.Context, req *pb.GetHashtagRequest) (*pb.GetHashtagResponse, error) {
 	hashtag, err := db.GetHashtagById(ctx, req.GetId())
 	if err != nil {
 		fmt.Println("Can not get Hashtag", err)
 	}
-	return &hashtagspb.GetHashtagResponse{
-		Hashtag: &hashtagspb.Hashtag{
+	return &pb.GetHashtagResponse{
+		Hashtag: &pb.Hashtag{
 			Id:        hashtag.Id,
 			CreatedAt: hashtag.CreatedAt,
 			Title:     hashtag.Title,
 		},
 	}, nil
 }
-func (*server) UpdateHashtag(ctx context.Context, req *hashtagspb.UpdateHashtagRequest) (*hashtagspb.UpdateHashtagResponse, error) {
+func (*server) UpdateHashtag(ctx context.Context, req *pb.UpdateHashtagRequest) (*pb.UpdateHashtagResponse, error) {
 	updateHashtag, err := db.UpdateHashtag(ctx, pg.UpdateHashtagParams{
 		Id:    req.GetId(),
 		Title: req.GetTitle(),
@@ -76,52 +76,52 @@ func (*server) UpdateHashtag(ctx context.Context, req *hashtagspb.UpdateHashtagR
 	if err != nil {
 		fmt.Println("Can not update Hashtag")
 	}
-	return &hashtagspb.UpdateHashtagResponse{
-		Hashtag: &hashtagspb.Hashtag{
+	return &pb.UpdateHashtagResponse{
+		Hashtag: &pb.Hashtag{
 			Id:        updateHashtag.Id,
 			CreatedAt: updateHashtag.CreatedAt,
 			Title:     updateHashtag.Title,
 		},
 	}, nil
 }
-func (*server) DeleteHashtag(ctx context.Context, req *hashtagspb.DeleteHashtagRequest) (*hashtagspb.DeleteHashtagResponse, error) {
+func (*server) DeleteHashtag(ctx context.Context, req *pb.DeleteHashtagRequest) (*pb.DeleteHashtagResponse, error) {
 	delHashtag, err := db.DeleteHashtag(ctx, req.GetId())
 	if err != nil {
 		fmt.Println("Error deleting Hashtag", err)
 	}
-	return &hashtagspb.DeleteHashtagResponse{
-		Hashtag: &hashtagspb.Hashtag{
+	return &pb.DeleteHashtagResponse{
+		Hashtag: &pb.Hashtag{
 			Id:        delHashtag.Id,
 			CreatedAt: delHashtag.CreatedAt,
 			Title:     delHashtag.Title,
 		},
 	}, nil
 }
-func (*server) ListHashtags(ctx context.Context, req *hashtagspb.ListHashtagsRequest) (*hashtagspb.ListHashtagsResponse, error) {
+func (*server) ListHashtags(ctx context.Context, req *pb.ListHashtagsRequest) (*pb.ListHashtagsResponse, error) {
 	hashtags, err := db.ListHashtags(ctx)
 	if err != nil {
 		fmt.Println("Error listing Hashtags", err)
 	}
-	data := &hashtagspb.ListHashtagsResponse{}
+	data := &pb.ListHashtagsResponse{}
 	copier.Copy(&data.Hashtag, &hashtags)
-	return &hashtagspb.ListHashtagsResponse{
+	return &pb.ListHashtagsResponse{
 		Hashtag: data.Hashtag,
 	}, nil
 }
-func (*server) ListHashtagsById(ctx context.Context, req *hashtagspb.ListHashtagsByIdRequest) (*hashtagspb.ListHashtagsByIdResponse, error) {
+func (*server) ListHashtagsById(ctx context.Context, req *pb.ListHashtagsByIdRequest) (*pb.ListHashtagsByIdResponse, error) {
 	hashtags, err := db.ListHashtagsById(ctx, req.GetId())
 	if err != nil {
 		fmt.Println("Error listing Hashtags", err)
 	}
-	data := &hashtagspb.ListHashtagsByIdResponse{}
+	data := &pb.ListHashtagsByIdResponse{}
 	copier.Copy(&data.Hashtag, &hashtags)
-	return &hashtagspb.ListHashtagsByIdResponse{
+	return &pb.ListHashtagsByIdResponse{
 		Hashtag: data.Hashtag,
 	}, nil
 }
 
 // HashtagPost
-func (*server) CreateHashtagPost(ctx context.Context, req *hashtagspb.CreateHashtagPostRequest) (*hashtagspb.CreateHashtagPostResponse, error) {
+func (*server) CreateHashtagPost(ctx context.Context, req *pb.CreateHashtagPostRequest) (*pb.CreateHashtagPostResponse, error) {
 	createHasPost, err := db.CreateHashtagPost(ctx, pg.CreateHashtagPostParams{
 		HashtagId: req.GetHashtagPost().GetHashtagId(),
 		PostId:    req.GetHashtagPost().GetPostId(),
@@ -129,59 +129,59 @@ func (*server) CreateHashtagPost(ctx context.Context, req *hashtagspb.CreateHash
 	if err != nil {
 		fmt.Println("Error creating hashtagPost", err)
 	}
-	return &hashtagspb.CreateHashtagPostResponse{
-		HashtagPost: &hashtagspb.HashtagPost{
+	return &pb.CreateHashtagPostResponse{
+		HashtagPost: &pb.HashtagPost{
 			Id:        createHasPost.Id,
 			HashtagId: createHasPost.HashtagId,
 			PostId:    createHasPost.PostId,
 		},
 	}, nil
 }
-func (*server) GetHashtagPost(ctx context.Context, req *hashtagspb.GetHashtagPostRequest) (*hashtagspb.GetHashtagPostResponse, error) {
+func (*server) GetHashtagPost(ctx context.Context, req *pb.GetHashtagPostRequest) (*pb.GetHashtagPostResponse, error) {
 	hashPost, err := db.GetHashtagPostById(ctx, req.GetId())
 	if err != nil {
 		fmt.Println("Error getting hashtagPost", err)
 	}
-	return &hashtagspb.GetHashtagPostResponse{
-		HashtagPost: &hashtagspb.HashtagPost{
+	return &pb.GetHashtagPostResponse{
+		HashtagPost: &pb.HashtagPost{
 			Id:        hashPost.Id,
 			HashtagId: hashPost.HashtagId,
 			PostId:    hashPost.PostId,
 		},
 	}, nil
 }
-func (*server) DeleteHashtagPost(ctx context.Context, req *hashtagspb.DeleteHashtagPostRequest) (*hashtagspb.DeleteHashtagPostResponse, error) {
+func (*server) DeleteHashtagPost(ctx context.Context, req *pb.DeleteHashtagPostRequest) (*pb.DeleteHashtagPostResponse, error) {
 	delHasPost, err := db.DeleteHashtagPost(ctx, req.GetId())
 	if err != nil {
 		fmt.Println("Error deleting hashtagPost", err)
 	}
-	return &hashtagspb.DeleteHashtagPostResponse{
-		HashtagPost: &hashtagspb.HashtagPost{
+	return &pb.DeleteHashtagPostResponse{
+		HashtagPost: &pb.HashtagPost{
 			Id:        delHasPost.Id,
 			HashtagId: delHasPost.HashtagId,
 			PostId:    delHasPost.PostId,
 		},
 	}, nil
 }
-func (*server) ListHashtagPosts(ctx context.Context, req *hashtagspb.ListHashtagPostsRequest) (*hashtagspb.ListHashtagPostsResponse, error) {
+func (*server) ListHashtagPosts(ctx context.Context, req *pb.ListHashtagPostsRequest) (*pb.ListHashtagPostsResponse, error) {
 	hasPosts, err := db.ListHashtagsPost(ctx)
 	if err != nil {
 		fmt.Println("Error Listing hashtagsPost", err)
 	}
-	data := &hashtagspb.ListHashtagPostsResponse{}
+	data := &pb.ListHashtagPostsResponse{}
 	copier.Copy(&data.HashtagPost, &hasPosts)
-	return &hashtagspb.ListHashtagPostsResponse{
+	return &pb.ListHashtagPostsResponse{
 		HashtagPost: data.HashtagPost,
 	}, nil
 }
-func (*server) ListHashtagPostsById(ctx context.Context, req *hashtagspb.ListHashtagPostsByIdRequest) (*hashtagspb.ListHashtagPostsByIdResponse, error) {
+func (*server) ListHashtagPostsById(ctx context.Context, req *pb.ListHashtagPostsByIdRequest) (*pb.ListHashtagPostsByIdResponse, error) {
 	hasPosts, err := db.ListHashtagsPost(ctx)
 	if err != nil {
 		fmt.Println("Error Listing hashtagsPost", err)
 	}
-	data := &hashtagspb.ListHashtagPostsByIdResponse{}
+	data := &pb.ListHashtagPostsByIdResponse{}
 	copier.Copy(&data.HashtagPost, &hasPosts)
-	return &hashtagspb.ListHashtagPostsByIdResponse{
+	return &pb.ListHashtagPostsByIdResponse{
 		HashtagPost: data.HashtagPost,
 	}, nil
 }
@@ -203,8 +203,8 @@ func main() {
 	opts := []grpc.ServerOption{}
 
 	s := grpc.NewServer(opts...)
-	hashtagspb.RegisterHashtagsServiceServer(s, &server{})
-	hashtagspb.RegisterHashtagPostsServiceServer(s, &server{})
+	pb.RegisterHashtagsServiceServer(s, &server{})
+	pb.RegisterHashtagPostsServiceServer(s, &server{})
 
 	//Register reflection service on gRPC server
 	reflection.Register(s)

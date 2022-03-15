@@ -1,0 +1,77 @@
+query PostLike($postId: Int!) {
+  postLikeByPostId(post_id: $postId) {
+    id
+    user_id
+    post_id
+    user {
+      username
+      avatar
+    }
+  }
+}
+
+query CommentLike($commentId: Int!) {
+  commentLikeByCommentId(comment_id: $commentId) {
+    id
+    created_at
+    user_id
+    commentId
+    user {
+      id
+      username
+      avatar
+    }
+  }
+}
+
+# Mutations
+mutation CreatePostLike($input: NewPostLike) {
+  createPostLike(input: $input) {
+    id
+    created_at
+    user_id
+    post_id
+    user {
+      id
+      username
+      avatar
+    }
+  }
+}
+
+mutation DeletePostLike($input: Int) {
+  deletePostLikeById(input: $input) {
+    id
+    created_at
+    user_id
+    post_id
+  }
+}
+
+mutation CreateCommentLike($input: NewCommentLike) {
+  createCommentLike(input: $input) {
+    id
+    created_at
+    user_id
+    commentId
+    user {
+      id
+      username
+      avatar
+    }
+  }
+}
+
+mutation DeleteCommentLike($input: Int) {
+  deleteCommentLikeById(input: $input) {
+    id
+    created_at
+    user_id
+    commentId
+    user {
+      id
+      username
+      avatar
+    }
+  }
+}

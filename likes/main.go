@@ -1,7 +1,7 @@
 package main
 
 import (
-	"cesargdd/grpc-likes/likespb"
+	"cesargdd/grpc-likes/pb"
 	"cesargdd/grpc-likes/pg"
 	"context"
 	"fmt"
@@ -17,8 +17,8 @@ import (
 )
 
 type server struct {
-	likespb.PostLikesServiceServer
-	likespb.CommentLikesServiceServer
+	pb.PostLikesServiceServer
+	pb.CommentLikesServiceServer
 }
 
 var conn = pg.Connect()
@@ -26,7 +26,7 @@ var db = pg.New(conn)
 
 // PostLikes
 
-func (*server) CreatePostLike(ctx context.Context, req *likespb.CreatePostLikeRequest) (*likespb.CreatePostLikeResponse, error) {
+func (*server) CreatePostLike(ctx context.Context, req *pb.CreatePostLikeRequest) (*pb.CreatePostLikeResponse, error) {
 	createPostLike, err := db.CreatePostLike(ctx, pg.CreatePostLikeParams{
 		UserId:    req.GetPostLike().GetUserId(),
 		PostId:    req.GetPostLike().GetPostId(),
@@ -35,8 +35,8 @@ func (*server) CreatePostLike(ctx context.Context, req *likespb.CreatePostLikeRe
 	if err != nil {
 		fmt.Println("Error creating postlike", err)
 	}
-	return &likespb.CreatePostLikeResponse{
-		PostLike: &likespb.PostLike{
+	return &pb.CreatePostLikeResponse{
+		PostLike: &pb.PostLike{
 			Id:        createPostLike.Id,
 			CreatedAt: createPostLike.CreatedAt,
 			UserId:    createPostLike.UserId,
@@ -44,13 +44,13 @@ func (*server) CreatePostLike(ctx context.Context, req *likespb.CreatePostLikeRe
 		},
 	}, nil
 }
-func (*server) GetPostLike(ctx context.Context, req *likespb.GetPostLikeRequest) (*likespb.GetPostLikeResponse, error) {
+func (*server) GetPostLike(ctx context.Context, req *pb.GetPostLikeRequest) (*pb.GetPostLikeResponse, error) {
 	postLike, err := db.GetPostLike(ctx, req.GetId())
 	if err != nil {
 		fmt.Println("error getting postLike", err)
 	}
-	return &likespb.GetPostLikeResponse{
-		PostLike: &likespb.PostLike{
+	return &pb.GetPostLikeResponse{
+		PostLike: &pb.PostLike{
 			Id:        postLike.Id,
 			CreatedAt: postLike.CreatedAt,
 			UserId:    postLike.UserId,
@@ -58,13 +58,13 @@ func (*server) GetPostLike(ctx context.Context, req *likespb.GetPostLikeRequest)
 		},
 	}, nil
 }
-func (*server) DeletePostLike(ctx context.Context, req *likespb.DeletePostLikeRequest) (*likespb.DeletePostLikeResponse, error) {
-	delPostLike, err := db.DeletePostLike(ctx, req.GetId())
+func (*server) DeletePostLikeById(ctx context.Context, req *pb.DeletePostLikeByIdRequest) (*pb.DeletePostLikeByIdResponse, error) {
+	delPostLike, err := db.DeletePostLikeById(ctx, req.GetId())
 	if err != nil {
 		fmt.Println("Error deleting postLike", err)
 	}
-	return &likespb.DeletePostLikeResponse{
-		PostLike: &likespb.PostLike{
+	return &pb.DeletePostLikeByIdResponse{
+		PostLike: &pb.PostLike{
 			Id:        delPostLike.Id,
 			CreatedAt: delPostLike.CreatedAt,
 			UserId:    delPostLike.UserId,
@@ -72,45 +72,59 @@ func (*server) DeletePostLike(ctx context.Context, req *likespb.DeletePostLikeRe
 		},
 	}, nil
 }
-func (*server) ListPostLikes(ctx context.Context, req *likespb.ListPostLikesRequest) (*likespb.ListPostLikesResponse, error) {
+func (*server) DeletePostLikeByUserId(ctx context.Context, req *pb.DeletePostLikeByUserIdRequest) (*pb.DeletePostLikeByUserIdResponse, error) {
+	delPostLike, err := db.DeletePostLikeByUserId(ctx, req.GetId())
+	if err != nil {
+		fmt.Println("Error deleting postLike", err)
+	}
+	return &pb.DeletePostLikeByUserIdResponse{
+		PostLike: &pb.PostLike{
+			Id:        delPostLike.Id,
+			CreatedAt: delPostLike.CreatedAt,
+			UserId:    delPostLike.UserId,
+			PostId:    delPostLike.PostId,
+		},
+	}, nil
+}
+func (*server) ListPostLikes(ctx context.Context, req *pb.ListPostLikesRequest) (*pb.ListPostLikesResponse, error) {
 	postLikes, err := db.ListPostLikes(ctx)
 	if err != nil {
 		fmt.Println("Error listing postLikes", err)
 	}
-	data := &likespb.ListPostLikesResponse{}
+	data := &pb.ListPostLikesResponse{}
 	copier.Copy(&data.PostLike, &postLikes)
-	return &likespb.ListPostLikesResponse{
+	return &pb.ListPostLikesResponse{
 		PostLike: data.PostLike,
 	}, nil
 }
 
-func (*server) ListPostLikesById(ctx context.Context, req *likespb.ListPostLikesByIdRequest) (*likespb.ListPostLikesByIdResponse, error) {
+func (*server) ListPostLikesById(ctx context.Context, req *pb.ListPostLikesByIdRequest) (*pb.ListPostLikesByIdResponse, error) {
 	postLikes, err := db.ListPostLikesById(ctx, req.GetId())
 	if err != nil {
 		fmt.Println("Error listing postLikes", err)
 	}
-	data := &likespb.ListPostLikesByIdResponse{}
+	data := &pb.ListPostLikesByIdResponse{}
 	copier.Copy(&data.PostLike, &postLikes)
-	return &likespb.ListPostLikesByIdResponse{
+	return &pb.ListPostLikesByIdResponse{
 		PostLike: data.PostLike,
 	}, nil
 }
 
-func (*server) ListPostLikesByPostId(ctx context.Context, req *likespb.ListPostLikesByPostIdRequest) (*likespb.ListPostLikesByPostIdResponse, error) {
+func (*server) ListPostLikesByPostId(ctx context.Context, req *pb.ListPostLikesByPostIdRequest) (*pb.ListPostLikesByPostIdResponse, error) {
 	postLikes, err := db.ListPostLikesByPostId(ctx, req.GetPostId())
 	if err != nil {
 		fmt.Println("Error listing postLikes", err)
 	}
-	data := &likespb.ListPostLikesByPostIdResponse{}
+	data := &pb.ListPostLikesByPostIdResponse{}
 	copier.Copy(&data.PostLike, &postLikes)
-	return &likespb.ListPostLikesByPostIdResponse{
+	return &pb.ListPostLikesByPostIdResponse{
 		PostLike: data.PostLike,
 	}, nil
 }
 
 // CommentLikes
 
-func (*server) CreateCommentLike(ctx context.Context, req *likespb.CreateCommentLikeRequest) (*likespb.CreateCommentLikeResponse, error) {
+func (*server) CreateCommentLike(ctx context.Context, req *pb.CreateCommentLikeRequest) (*pb.CreateCommentLikeResponse, error) {
 	createCommentLike, err := db.CreateCommentLike(ctx, pg.CreateCommentLikeParams{
 		UserId:    req.GetCommentLike().GetUserId(),
 		CommentId: req.GetCommentLike().GetCommentId(),
@@ -119,8 +133,8 @@ func (*server) CreateCommentLike(ctx context.Context, req *likespb.CreateComment
 	if err != nil {
 		fmt.Println("Error creating Commentlike", err)
 	}
-	return &likespb.CreateCommentLikeResponse{
-		CommentLike: &likespb.CommentLike{
+	return &pb.CreateCommentLikeResponse{
+		CommentLike: &pb.CommentLike{
 			Id:        createCommentLike.Id,
 			CreatedAt: createCommentLike.CreatedAt,
 			UserId:    createCommentLike.UserId,
@@ -128,13 +142,13 @@ func (*server) CreateCommentLike(ctx context.Context, req *likespb.CreateComment
 		},
 	}, nil
 }
-func (*server) GetCommentLike(ctx context.Context, req *likespb.GetCommentLikeRequest) (*likespb.GetCommentLikeResponse, error) {
+func (*server) GetCommentLike(ctx context.Context, req *pb.GetCommentLikeRequest) (*pb.GetCommentLikeResponse, error) {
 	commentLike, err := db.GetCommentLike(ctx, req.GetId())
 	if err != nil {
 		fmt.Println("error getting CommentLike", err)
 	}
-	return &likespb.GetCommentLikeResponse{
-		CommentLike: &likespb.CommentLike{
+	return &pb.GetCommentLikeResponse{
+		CommentLike: &pb.CommentLike{
 			Id:        commentLike.Id,
 			CreatedAt: commentLike.CreatedAt,
 			UserId:    commentLike.UserId,
@@ -142,13 +156,13 @@ func (*server) GetCommentLike(ctx context.Context, req *likespb.GetCommentLikeRe
 		},
 	}, nil
 }
-func (*server) DeleteCommentLike(ctx context.Context, req *likespb.DeleteCommentLikeRequest) (*likespb.DeleteCommentLikeResponse, error) {
-	delCommentLike, err := db.DeleteCommentLike(ctx, req.GetId())
+func (*server) DeleteCommentLikeById(ctx context.Context, req *pb.DeleteCommentLikeByIdRequest) (*pb.DeleteCommentLikeByIdResponse, error) {
+	delCommentLike, err := db.DeleteCommentLikeById(ctx, req.GetId())
 	if err != nil {
 		fmt.Println("Error deleting CommentLike", err)
 	}
-	return &likespb.DeleteCommentLikeResponse{
-		CommentLike: &likespb.CommentLike{
+	return &pb.DeleteCommentLikeByIdResponse{
+		CommentLike: &pb.CommentLike{
 			Id:        delCommentLike.Id,
 			CreatedAt: delCommentLike.CreatedAt,
 			UserId:    delCommentLike.UserId,
@@ -156,37 +170,51 @@ func (*server) DeleteCommentLike(ctx context.Context, req *likespb.DeleteComment
 		},
 	}, nil
 }
-func (*server) ListCommentLikes(ctx context.Context, req *likespb.ListCommentLikesRequest) (*likespb.ListCommentLikesResponse, error) {
+func (*server) DeleteCommentLikeByUserId(ctx context.Context, req *pb.DeleteCommentLikeByUserIdRequest) (*pb.DeleteCommentLikeByUserIdResponse, error) {
+	delCommentLike, err := db.DeleteCommentLikeByUserId(ctx, req.GetId())
+	if err != nil {
+		fmt.Println("Error deleting CommentLike", err)
+	}
+	return &pb.DeleteCommentLikeByUserIdResponse{
+		CommentLike: &pb.CommentLike{
+			Id:        delCommentLike.Id,
+			CreatedAt: delCommentLike.CreatedAt,
+			UserId:    delCommentLike.UserId,
+			CommentId: delCommentLike.CommentId,
+		},
+	}, nil
+}
+func (*server) ListCommentLikes(ctx context.Context, req *pb.ListCommentLikesRequest) (*pb.ListCommentLikesResponse, error) {
 	commentLikes, err := db.ListCommentLikes(ctx)
 	if err != nil {
 		fmt.Println("Error listing CommentLikes", err)
 	}
-	data := &likespb.ListCommentLikesResponse{}
+	data := &pb.ListCommentLikesResponse{}
 	copier.Copy(&data.CommentLike, &commentLikes)
-	return &likespb.ListCommentLikesResponse{
+	return &pb.ListCommentLikesResponse{
 		CommentLike: data.CommentLike,
 	}, nil
 }
 
-func (*server) ListCommentLikesById(ctx context.Context, req *likespb.ListCommentLikesByIdRequest) (*likespb.ListCommentLikesByIdResponse, error) {
+func (*server) ListCommentLikesById(ctx context.Context, req *pb.ListCommentLikesByIdRequest) (*pb.ListCommentLikesByIdResponse, error) {
 	commentLikes, err := db.ListCommentLikesById(ctx, req.GetId())
 	if err != nil {
 		fmt.Println("Error listing CommentLikes", err)
 	}
-	data := &likespb.ListCommentLikesByIdResponse{}
+	data := &pb.ListCommentLikesByIdResponse{}
 	copier.Copy(&data.CommentLike, &commentLikes)
-	return &likespb.ListCommentLikesByIdResponse{
+	return &pb.ListCommentLikesByIdResponse{
 		CommentLike: data.CommentLike,
 	}, nil
 }
-func (*server) ListCommentLikesByCommentId(ctx context.Context, req *likespb.ListCommentLikesByCommentIdRequest) (*likespb.ListCommentLikesByCommentIdResponse, error) {
+func (*server) ListCommentLikesByCommentId(ctx context.Context, req *pb.ListCommentLikesByCommentIdRequest) (*pb.ListCommentLikesByCommentIdResponse, error) {
 	commentLikes, err := db.ListCommentLikesByCommentId(ctx, req.GetCommentId())
 	if err != nil {
 		fmt.Println("Error listing CommentLikes", err)
 	}
-	data := &likespb.ListCommentLikesByCommentIdResponse{}
+	data := &pb.ListCommentLikesByCommentIdResponse{}
 	copier.Copy(&data.CommentLike, &commentLikes)
-	return &likespb.ListCommentLikesByCommentIdResponse{
+	return &pb.ListCommentLikesByCommentIdResponse{
 		CommentLike: data.CommentLike,
 	}, nil
 }
@@ -208,8 +236,8 @@ func main() {
 	opts := []grpc.ServerOption{}
 
 	s := grpc.NewServer(opts...)
-	likespb.RegisterPostLikesServiceServer(s, &server{})
-	likespb.RegisterCommentLikesServiceServer(s, &server{})
+	pb.RegisterPostLikesServiceServer(s, &server{})
+	pb.RegisterCommentLikesServiceServer(s, &server{})
 
 	//Register reflection service on gRPC server
 	reflection.Register(s)

@@ -4,7 +4,7 @@ WHERE id = $1;
 
 -- name: ListPosts :many
 SELECT * FROM posts
-ORDER BY id;
+ORDER BY id DESC;
 
 -- name: ListPostsById :many
 SELECT * FROM posts

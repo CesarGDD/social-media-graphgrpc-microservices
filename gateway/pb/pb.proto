@@ -32,6 +32,14 @@ message GetUserResponse {
     User user = 1;
 }
 
+message GetUserByUsernameRequest {
+    string username = 1;
+}
+
+message GetUserByUsernameResponse {
+    User user = 1;
+}
+
 message UpdateUserRequest {
     int32 id = 1;
     string bio = 2;
@@ -70,6 +78,7 @@ message ListUsersByIdResponse {
 service UsersService {
     rpc CreateUser (CreateUserRequest) returns (CreateUserResponse);
     rpc GetUser (GetUserRequest) returns (GetUserResponse);
+    rpc GetUserByUsername (GetUserByUsernameRequest) returns (GetUserByUsernameResponse);
     rpc UpdateUser (UpdateUserRequest) returns (UpdateUserResponse);
     rpc DeleteUser (DeleteUserRequest) returns (DeleteUserResponse);
     rpc ListUsers (ListUsersRequest) returns (ListUsersResponse);
@@ -155,6 +164,8 @@ service PostsService {
     rpc ListPostsById (ListPostsByIdRequest) returns (ListPostsByIdResponse);
     rpc ListPostsByUserId (ListPostsByUserIdRequest) returns (ListPostsByUserIdResponse);
 }
+
+
 
 // Comment
 
@@ -262,11 +273,19 @@ message GetPostLikeResponse {
 }
 
 
-message DeletePostLikeRequest {
+message DeletePostLikeByIdRequest {
     int32 id = 1;
 }
 
-message DeletePostLikeResponse {
+message DeletePostLikeByIdResponse {
+    PostLike PostLike = 1;
+}
+
+message DeletePostLikeByUserIdRequest {
+    int32 id = 1;
+}
+
+message DeletePostLikeByUserIdResponse {
     PostLike PostLike = 1;
 }
 
@@ -297,7 +316,8 @@ message ListPostLikesByPostIdResponse {
 service PostLikesService {
     rpc CreatePostLike (CreatePostLikeRequest) returns (CreatePostLikeResponse);
     rpc GetPostLike (GetPostLikeRequest) returns (GetPostLikeResponse);
-    rpc DeletePostLike (DeletePostLikeRequest) returns (DeletePostLikeResponse);
+    rpc DeletePostLikeById (DeletePostLikeByIdRequest) returns (DeletePostLikeByIdResponse);
+    rpc DeletePostLikeByUserId (DeletePostLikeByUserIdRequest) returns (DeletePostLikeByUserIdResponse);
     rpc ListPostLikes (ListPostLikesRequest) returns (ListPostLikesResponse);
     rpc ListPostLikesById (ListPostLikesByIdRequest) returns (ListPostLikesByIdResponse);
     rpc ListPostLikesByPostId (ListPostLikesByPostIdRequest) returns (ListPostLikesByPostIdResponse);
@@ -329,11 +349,19 @@ message GetCommentLikeResponse {
 }
 
 
-message DeleteCommentLikeRequest {
+message DeleteCommentLikeByIdRequest {
     int32 id = 1;
 }
 
-message DeleteCommentLikeResponse {
+message DeleteCommentLikeByIdResponse {
+    CommentLike commentLike = 1;
+}
+
+message DeleteCommentLikeByUserIdRequest {
+    int32 id = 1;
+}
+
+message DeleteCommentLikeByUserIdResponse {
     CommentLike commentLike = 1;
 }
 
@@ -364,12 +392,12 @@ message ListCommentLikesByCommentIdResponse {
 service CommentLikesService {
     rpc CreateCommentLike (CreateCommentLikeRequest) returns (CreateCommentLikeResponse);
     rpc GetCommentLike (GetCommentLikeRequest) returns (GetCommentLikeResponse);
-    rpc DeleteCommentLike (DeleteCommentLikeRequest) returns (DeleteCommentLikeResponse);
+    rpc DeleteCommentLikeById (DeleteCommentLikeByIdRequest) returns (DeleteCommentLikeByIdResponse);
+    rpc DeleteCommentLikeByUserId (DeleteCommentLikeByUserIdRequest) returns (DeleteCommentLikeByUserIdResponse);
     rpc ListCommentLikes (ListCommentLikesRequest) returns (ListCommentLikesResponse);
     rpc ListCommentLikesById (ListCommentLikesByIdRequest) returns (ListCommentLikesByIdResponse);
     rpc ListCommentLikesByCommentId (ListCommentLikesByCommentIdRequest) returns (ListCommentLikesByCommentIdResponse);
 }
-
 
 // Hashtag
 

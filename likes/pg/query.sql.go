@@ -55,14 +55,14 @@ func (q *Queries) CreatePostLike(ctx context.Context, arg CreatePostLikeParams) 
 	return i, err
 }
 
-const deleteCommentLike = `-- name: DeleteCommentLike :one
+const deleteCommentLikeById = `-- name: DeleteCommentLikeById :one
 DELETE FROM comment_likes
 WHERE id = $1
 RETURNING id, created_at, user_id, comment_id
 `
 
-func (q *Queries) DeleteCommentLike(ctx context.Context, id int32) (CommentLike, error) {
-	row := q.db.QueryRowContext(ctx, deleteCommentLike, id)
+func (q *Queries) DeleteCommentLikeById(ctx context.Context, id int32) (CommentLike, error) {
+	row := q.db.QueryRowContext(ctx, deleteCommentLikeById, id)
 	var i CommentLike
 	err := row.Scan(
 		&i.Id,
@@ -73,14 +73,50 @@ func (q *Queries) DeleteCommentLike(ctx context.Context, id int32) (CommentLike,
 	return i, err
 }
 
-const deletePostLike = `-- name: DeletePostLike :one
+const deleteCommentLikeByUserId = `-- name: DeleteCommentLikeByUserId :one
+DELETE FROM comment_likes
+WHERE user_id = $1
+RETURNING id, created_at, user_id, comment_id
+`
+
+func (q *Queries) DeleteCommentLikeByUserId(ctx context.Context, userId int32) (CommentLike, error) {
+	row := q.db.QueryRowContext(ctx, deleteCommentLikeByUserId, userId)
+	var i CommentLike
+	err := row.Scan(
+		&i.Id,
+		&i.CreatedAt,
+		&i.UserId,
+		&i.CommentId,
+	)
+	return i, err
+}
+
+const deletePostLikeById = `-- name: DeletePostLikeById :one
 DELETE FROM post_likes
 WHERE id = $1
 RETURNING id, created_at, user_id, post_id
 `
 
-func (q *Queries) DeletePostLike(ctx context.Context, id int32) (PostLike, error) {
-	row := q.db.QueryRowContext(ctx, deletePostLike, id)
+func (q *Queries) DeletePostLikeById(ctx context.Context, id int32) (PostLike, error) {
+	row := q.db.QueryRowContext(ctx, deletePostLikeById, id)
+	var i PostLike
+	err := row.Scan(
+		&i.Id,
+		&i.CreatedAt,
+		&i.UserId,
+		&i.PostId,
+	)
+	return i, err
+}
+
+const deletePostLikeByUserId = `-- name: DeletePostLikeByUserId :one
+DELETE FROM post_likes
+WHERE user_id = $1
+RETURNING id, created_at, user_id, post_id
+`
+
+func (q *Queries) DeletePostLikeByUserId(ctx context.Context, userId int32) (PostLike, error) {
+	row := q.db.QueryRowContext(ctx, deletePostLikeByUserId, userId)
 	var i PostLike
 	err := row.Scan(
 		&i.Id,

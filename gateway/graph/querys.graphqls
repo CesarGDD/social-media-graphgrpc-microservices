@@ -8,13 +8,16 @@ type Query {
   posts: [Post!]!
   # Comments
   comment(id: Int!): Comment!
+  commentsByPostId(id: Int!):[Comment!]!
   comments: [Comment!]!
   # PostLikes
-  PostLike(id: Int!): PostLike!
-  PostLikes: [PostLike!]!
+  postLike(id: Int!): PostLike!
+  postLikes: [PostLike!]!
+  postLikeByPostId(post_id: Int!): [PostLike!]!
   # CommentLikes
-  CommentLike(id: Int!): CommentLike!
-  CommentLikes: [CommentLike!]!
+  commentLike(id: Int!): CommentLike!
+  commentLikes: [CommentLike!]!
+  commentLikeByCommentId(comment_id: Int!): [CommentLike!]!
   # Hashtag
   hashtagByTitle(title: String!): Hashtag!
   hashtag(id: Int!): Hashtag!

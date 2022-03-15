@@ -1,7 +1,7 @@
 package main
 
 import (
-	"cesargdd/grpc-comments/commentspb"
+	"cesargdd/grpc-comments/pb"
 	"cesargdd/grpc-comments/pg"
 	"context"
 	"fmt"
@@ -17,7 +17,7 @@ import (
 )
 
 type server struct {
-	commentspb.CommentsServiceServer
+	pb.CommentsServiceServer
 }
 
 var conn = pg.Connect()
@@ -25,7 +25,7 @@ var db = pg.New(conn)
 
 // Comments
 
-func (*server) CreateComment(ctx context.Context, req *commentspb.CreateCommentRequest) (*commentspb.CreateCommentResponse, error) {
+func (*server) CreateComment(ctx context.Context, req *pb.CreateCommentRequest) (*pb.CreateCommentResponse, error) {
 	createComment, err := db.CreateComment(ctx, pg.CreateCommentParams{
 		Contents:  req.GetComment().GetContents(),
 		UserId:    req.GetComment().GetUserId(),
@@ -36,24 +36,24 @@ func (*server) CreateComment(ctx context.Context, req *commentspb.CreateCommentR
 	if err != nil {
 		fmt.Println("Error creating Comment", err)
 	}
-	return &commentspb.CreateCommentResponse{
-		Comment: &commentspb.Comment{
+	return &pb.CreateCommentResponse{
+		Comment: &pb.Comment{
 			Id:        createComment.Id,
 			CreatedAt: createComment.CreatedAt,
 			UpdatedAt: createComment.UpdatedAt,
 			Contents:  createComment.Contents,
 			UserId:    createComment.UserId,
-			PostId:    createComment.UserId,
+			PostId:    createComment.PostId,
 		},
 	}, nil
 }
-func (*server) GetComment(ctx context.Context, req *commentspb.GetCommentRequest) (*commentspb.GetCommentResponse, error) {
+func (*server) GetComment(ctx context.Context, req *pb.GetCommentRequest) (*pb.GetCommentResponse, error) {
 	comment, err := db.GetComment(ctx, req.GetId())
 	if err != nil {
 		fmt.Println("Can not get comment", err)
 	}
-	return &commentspb.GetCommentResponse{
-		Comment: &commentspb.Comment{
+	return &pb.GetCommentResponse{
+		Comment: &pb.Comment{
 			Id:        comment.Id,
 			CreatedAt: comment.CreatedAt,
 			UpdatedAt: comment.UpdatedAt,
@@ -63,7 +63,7 @@ func (*server) GetComment(ctx context.Context, req *commentspb.GetCommentRequest
 		},
 	}, nil
 }
-func (*server) UpdateComment(ctx context.Context, req *commentspb.UpdateCommentRequest) (*commentspb.UpdateCommentResponse, error) {
+func (*server) UpdateComment(ctx context.Context, req *pb.UpdateCommentRequest) (*pb.UpdateCommentResponse, error) {
 	updateComment, err := db.UpdateComment(ctx, pg.UpdateCommentParams{
 		Id:        req.GetId(),
 		Contents:  req.GetContents(),
@@ -72,8 +72,8 @@ func (*server) UpdateComment(ctx context.Context, req *commentspb.UpdateCommentR
 	if err != nil {
 		fmt.Println("Can not update comment")
 	}
-	return &commentspb.UpdateCommentResponse{
-		Comment: &commentspb.Comment{
+	return &pb.UpdateCommentResponse{
+		Comment: &pb.Comment{
 			Id:        updateComment.Id,
 			CreatedAt: updateComment.CreatedAt,
 			UpdatedAt: updateComment.UpdatedAt,
@@ -83,13 +83,13 @@ func (*server) UpdateComment(ctx context.Context, req *commentspb.UpdateCommentR
 		},
 	}, nil
 }
-func (*server) DeleteComment(ctx context.Context, req *commentspb.DeleteCommentRequest) (*commentspb.DeleteCommentResponse, error) {
+func (*server) DeleteComment(ctx context.Context, req *pb.DeleteCommentRequest) (*pb.DeleteCommentResponse, error) {
 	delComment, err := db.DeleteComment(ctx, req.GetId())
 	if err != nil {
 		fmt.Println("Error deleting Comment", err)
 	}
-	return &commentspb.DeleteCommentResponse{
-		Comment: &commentspb.Comment{
+	return &pb.DeleteCommentResponse{
+		Comment: &pb.Comment{
 			Id:        delComment.Id,
 			CreatedAt: delComment.CreatedAt,
 			UpdatedAt: delComment.UpdatedAt,
@@ -99,37 +99,37 @@ func (*server) DeleteComment(ctx context.Context, req *commentspb.DeleteCommentR
 		},
 	}, nil
 }
-func (*server) ListComments(ctx context.Context, req *commentspb.ListCommentsRequest) (*commentspb.ListCommentsResponse, error) {
+func (*server) ListComments(ctx context.Context, req *pb.ListCommentsRequest) (*pb.ListCommentsResponse, error) {
 	comments, err := db.ListComments(ctx)
 	if err != nil {
 		fmt.Println("Error listing comments", err)
 	}
-	data := &commentspb.ListCommentsResponse{}
+	data := &pb.ListCommentsResponse{}
 	copier.Copy(&data.Comment, &comments)
-	return &commentspb.ListCommentsResponse{
+	return &pb.ListCommentsResponse{
 		Comment: data.Comment,
 	}, nil
 }
 
-func (*server) ListCommentsById(ctx context.Context, req *commentspb.ListCommentsByIdRequest) (*commentspb.ListCommentsByIdResponse, error) {
+func (*server) ListCommentsById(ctx context.Context, req *pb.ListCommentsByIdRequest) (*pb.ListCommentsByIdResponse, error) {
 	comments, err := db.ListCommentsById(ctx, req.GetId())
 	if err != nil {
 		fmt.Println("Error listing comments", err)
 	}
-	data := &commentspb.ListCommentsByIdResponse{}
+	data := &pb.ListCommentsByIdResponse{}
 	copier.Copy(&data.Comment, &comments)
-	return &commentspb.ListCommentsByIdResponse{
+	return &pb.ListCommentsByIdResponse{
 		Comment: data.Comment,
 	}, nil
 }
-func (*server) ListCommentsByPostId(ctx context.Context, req *commentspb.ListCommentsByPostIdRequest) (*commentspb.ListCommentsByPostIdResponse, error) {
+func (*server) ListCommentsByPostId(ctx context.Context, req *pb.ListCommentsByPostIdRequest) (*pb.ListCommentsByPostIdResponse, error) {
 	comments, err := db.ListCommentsByPostId(ctx, req.GetPostId())
 	if err != nil {
 		fmt.Println("Error listing comments", err)
 	}
-	data := &commentspb.ListCommentsByPostIdResponse{}
+	data := &pb.ListCommentsByPostIdResponse{}
 	copier.Copy(&data.Comment, &comments)
-	return &commentspb.ListCommentsByPostIdResponse{
+	return &pb.ListCommentsByPostIdResponse{
 		Comment: data.Comment,
 	}, nil
 }
@@ -151,7 +151,7 @@ func main() {
 	opts := []grpc.ServerOption{}
 
 	s := grpc.NewServer(opts...)
-	commentspb.RegisterCommentsServiceServer(s, &server{})
+	pb.RegisterCommentsServiceServer(s, &server{})
 
 	//Register reflection service on gRPC server
 	reflection.Register(s)

@@ -1,0 +1,64 @@
+# Queries
+query GetPosts {
+  posts {
+    id
+    created_at
+    updated_at
+    url
+    caption
+    user_id
+    user {
+      id
+      username
+      avatar
+    }
+  }
+}
+
+query GetPostById($postId: Int!) {
+  post(id: $postId) {
+    id
+    created_at
+    url
+    caption
+    updated_at
+    user_id
+    user {
+      id
+      username
+      avatar
+    }
+  }
+}
+
+# Mutations
+
+mutation CreatePost($input: NewPost) {
+  createPost(input: $input) {
+    id
+    created_at
+    updated_at
+    url
+    caption
+    user_id
+  }
+}
+
+mutation UpdatePost($input: EditPost) {
+  updatePost(input: $input) {
+    id
+    created_at
+    updated_at
+    url
+    caption
+    user_id
+  }
+}
+
+mutation DeletePost($input: Int) {
+  deletePost(input: $input) {
+    id
+    url
+    caption
+  }
+}

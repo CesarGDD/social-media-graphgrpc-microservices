@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: database-claim
+spec:
+  resources:
+    requests:
+      storage: 500M
+  accessModes:
+    - ReadWriteOnce

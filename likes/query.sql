@@ -19,7 +19,11 @@ INSERT INTO post_likes (user_id, post_id, created_at)
 VALUES ($1, $2, $3)
 RETURNING *;
 
--- name: DeletePostLike :one
+-- name: DeletePostLikeByUserId :one
+DELETE FROM post_likes
+WHERE user_id = $1
+RETURNING *;
+-- name: DeletePostLikeById :one
 DELETE FROM post_likes
 WHERE id = $1
 RETURNING *;
@@ -45,7 +49,11 @@ INSERT INTO comment_likes (user_id, comment_id, created_at)
 VALUES ($1, $2, $3)
 RETURNING *;
 
--- name: DeleteCommentLike :one
+-- name: DeleteCommentLikeById :one
 DELETE FROM comment_likes
 WHERE id = $1
+RETURNING *;
+-- name: DeleteCommentLikeByUserId :one
+DELETE FROM comment_likes
+WHERE user_id = $1
 RETURNING *;

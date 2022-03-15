@@ -1,7 +1,8 @@
 type Mutation {
+  login(input: LoginInput!): AuthResponse!
   # Users
-  createUser(input: NewUser):User!
-  updateUser(input: EditUser):User!
+  createUser(input: NewUser): AuthResponse!
+  updateUser(input: EditUser): User!
   deleteUser(input: Int):User
 
   # Posts
@@ -16,11 +17,13 @@ type Mutation {
 
   # PostLikes
   createPostLike(input: NewPostLike): PostLike!
-  deletePostLike(input: Int): PostLike
+  deletePostLikeById(input: Int): PostLike
+  deletePostLikeByUserId(input: Int): PostLike
   
   # CommentLikes
   createCommentLike(input: NewCommentLike): CommentLike!
-  deleteCommentLike(input: Int): CommentLike
+  deleteCommentLikeById(input: Int): CommentLike
+  deleteCommentLikeByUserId(input: Int): CommentLike
 
   # Hashtag
   createHashtag(input: NewHashtag): Hashtag!

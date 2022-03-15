@@ -4,7 +4,8 @@ WHERE id= $1;
 
 -- name: ListCommentsByPostId :many
 SELECT * FROM comments
-WHERE post_id= $1;
+WHERE post_id= $1
+ORDER BY id DESC;
 
 -- name: GetComment :one
 SELECT * FROM comments

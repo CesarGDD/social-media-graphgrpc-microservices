@@ -1,0 +1,93 @@
+query GetUserById($userId: Int!) {
+  user(id: $userId) {
+    id
+    created_at
+    updated_at
+    username
+    bio
+    avatar
+    email
+  }
+}
+
+query GetUserByUsername($username: String!) {
+  userByUsername(username: $username) {
+    id
+    created_at
+    updated_at
+    username
+    bio
+    avatar
+    email
+  }
+
+}query GetUserWithPostsById($userId: Int!) {
+  user(id: $userId) {
+    id
+    created_at
+    updated_at
+    username
+    bio
+    avatar
+    email
+    posts {
+      id
+      created_at
+      updated_at
+      url
+      caption
+      user_id
+      user {
+      id
+      username
+      avatar
+    }
+    }
+    followers {
+      id
+      follower_id
+      user {
+        username
+        avatar
+        id
+      }
+    }
+  }
+}
+
+# Mutations
+
+mutation CreateUser($input: NewUser) {
+  createUser(input: $input) {
+    authToken {
+      accessToken
+    }
+    user {
+      id
+      username
+      bio
+      avatar
+    }
+  }
+}
+
+mutation UpdateUser($input: EditUser) {
+  updateUser(input: $input) {
+    id
+    created_at
+    updated_at
+    username
+    bio
+    avatar
+    email
+  }
+}
+
+mutation DeleteUser($input: Int) {
+  deleteUser(input: $input) {
+    id
+    username
+    avatar
+  }
+}
+

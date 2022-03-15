@@ -1,0 +1,13 @@
+type AuthToken {
+  accessToken: String!
+}
+
+type AuthResponse {
+  authToken: AuthToken!
+  user: User!
+}
+
+input LoginInput {
+  username: String!
+  password: String!
+}

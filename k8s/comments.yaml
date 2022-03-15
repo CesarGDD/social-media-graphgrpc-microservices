@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: comments-deployment
 spec:
-  replcias: 1
+  replicas: 1
   selector:
     matchLabels:
       app: comments

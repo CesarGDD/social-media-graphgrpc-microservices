@@ -153,6 +153,7 @@ func (q *Queries) ListCommentsById(ctx context.Context, id int32) ([]Comment, er
 const listCommentsByPostId = `-- name: ListCommentsByPostId :many
 SELECT id, created_at, updated_at, contents, user_id, post_id FROM comments
 WHERE post_id= $1
+ORDER BY id DESC
 `
 
 func (q *Queries) ListCommentsByPostId(ctx context.Context, postId int32) ([]Comment, error) {

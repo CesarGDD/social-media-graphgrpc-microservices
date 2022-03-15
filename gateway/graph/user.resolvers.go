@@ -11,7 +11,7 @@ import (
 )
 
 func (r *userResolver) Posts(ctx context.Context, obj *pb.User) ([]*pb.Post, error) {
-	res, err := p.ListPostsById(ctx, &pb.ListPostsByIdRequest{Id: obj.Id})
+	res, err := p.ListPostsByUserId(ctx, &pb.ListPostsByUserIdRequest{UserId: obj.Id})
 	if err != nil {
 		fmt.Println(err)
 	}

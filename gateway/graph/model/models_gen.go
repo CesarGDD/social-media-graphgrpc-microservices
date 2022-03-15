@@ -2,6 +2,19 @@
 
 package model
 
+import (
+	"cesargdd/grpc-gateway/pb"
+)
+
+type AuthResponse struct {
+	AuthToken *AuthToken `json:"authToken"`
+	User      *pb.User   `json:"user"`
+}
+
+type AuthToken struct {
+	AccessToken string `json:"accessToken"`
+}
+
 type EditComment struct {
 	ID       int    `json:"id"`
 	Contents string `json:"contents"`
@@ -22,6 +35,11 @@ type EditUser struct {
 	ID     int     `json:"id"`
 	Bio    *string `json:"bio"`
 	Avatar *string `json:"avatar"`
+}
+
+type LoginInput struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
 
 type NewComment struct {

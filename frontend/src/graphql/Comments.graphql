@@ -1,0 +1,46 @@
+query CommentByPostId($commentsByPostIdId: Int!) {
+  commentsByPostId(id: $commentsByPostIdId) {
+    id
+    created_at
+    updated_at
+    contents
+    user_id
+    post_id
+    user {
+      id
+      username
+      avatar
+    }
+  }
+}
+
+# Mutations
+
+mutation CreateComment($input: NewComment) {
+  createComment(input: $input) {
+    id
+    created_at
+    updated_at
+    contents
+    user_id
+    post_id
+  }
+}
+
+mutation UpdateComment($input: EditComment) {
+  updateComment(input: $input) {
+    id
+    created_at
+    updated_at
+    contents
+    user_id
+    post_id
+  }
+}
+
+mutation DeleteComment($input: Int) {
+  deleteComment(input: $input) {
+    id
+    contents
+  }
+}

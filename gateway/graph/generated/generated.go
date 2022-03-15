@@ -51,6 +51,15 @@ type DirectiveRoot struct {
 }
 
 type ComplexityRoot struct {
+	AuthResponse struct {
+		AuthToken func(childComplexity int) int
+		User      func(childComplexity int) int
+	}
+
+	AuthToken struct {
+		AccessToken func(childComplexity int) int
+	}
+
 	Comment struct {
 		Contents  func(childComplexity int) int
 		CreatedAt func(childComplexity int) int
@@ -93,26 +102,29 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		CreateComment     func(childComplexity int, input *model.NewComment) int
-		CreateCommentLike func(childComplexity int, input *model.NewCommentLike) int
-		CreateFollower    func(childComplexity int, input *model.NewFollower) int
-		CreateHashtag     func(childComplexity int, input *model.NewHashtag) int
-		CreateHashtagPost func(childComplexity int, input *model.NewHashtagPost) int
-		CreatePost        func(childComplexity int, input *model.NewPost) int
-		CreatePostLike    func(childComplexity int, input *model.NewPostLike) int
-		CreateUser        func(childComplexity int, input *model.NewUser) int
-		DeleteComment     func(childComplexity int, input *int) int
-		DeleteCommentLike func(childComplexity int, input *int) int
-		DeleteFollower    func(childComplexity int, input *int) int
-		DeleteHashtag     func(childComplexity int, input *int) int
-		DeleteHashtagPost func(childComplexity int, input *int) int
-		DeletePost        func(childComplexity int, input *int) int
-		DeletePostLike    func(childComplexity int, input *int) int
-		DeleteUser        func(childComplexity int, input *int) int
-		UpdateComment     func(childComplexity int, input *model.EditComment) int
-		UpdateHashtag     func(childComplexity int, input *model.EditHashtag) int
-		UpdatePost        func(childComplexity int, input *model.EditPost) int
-		UpdateUser        func(childComplexity int, input *model.EditUser) int
+		CreateComment             func(childComplexity int, input *model.NewComment) int
+		CreateCommentLike         func(childComplexity int, input *model.NewCommentLike) int
+		CreateFollower            func(childComplexity int, input *model.NewFollower) int
+		CreateHashtag             func(childComplexity int, input *model.NewHashtag) int
+		CreateHashtagPost         func(childComplexity int, input *model.NewHashtagPost) int
+		CreatePost                func(childComplexity int, input *model.NewPost) int
+		CreatePostLike            func(childComplexity int, input *model.NewPostLike) int
+		CreateUser                func(childComplexity int, input *model.NewUser) int
+		DeleteComment             func(childComplexity int, input *int) int
+		DeleteCommentLikeByID     func(childComplexity int, input *int) int
+		DeleteCommentLikeByUserID func(childComplexity int, input *int) int
+		DeleteFollower            func(childComplexity int, input *int) int
+		DeleteHashtag             func(childComplexity int, input *int) int
+		DeleteHashtagPost         func(childComplexity int, input *int) int
+		DeletePost                func(childComplexity int, input *int) int
+		DeletePostLikeByID        func(childComplexity int, input *int) int
+		DeletePostLikeByUserID    func(childComplexity int, input *int) int
+		DeleteUser                func(childComplexity int, input *int) int
+		Login                     func(childComplexity int, input model.LoginInput) int
+		UpdateComment             func(childComplexity int, input *model.EditComment) int
+		UpdateHashtag             func(childComplexity int, input *model.EditHashtag) int
+		UpdatePost                func(childComplexity int, input *model.EditPost) int
+		UpdateUser                func(childComplexity int, input *model.EditUser) int
 	}
 
 	Post struct {
@@ -136,24 +148,27 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Comment        func(childComplexity int, id int) int
-		CommentLike    func(childComplexity int, id int) int
-		CommentLikes   func(childComplexity int) int
-		Comments       func(childComplexity int) int
-		Follower       func(childComplexity int, id int) int
-		Followers      func(childComplexity int) int
-		Hashtag        func(childComplexity int, id int) int
-		HashtagByTitle func(childComplexity int, title string) int
-		HashtagPost    func(childComplexity int, id int) int
-		Hashtags       func(childComplexity int) int
-		HashtagsPost   func(childComplexity int) int
-		Post           func(childComplexity int, id int) int
-		PostLike       func(childComplexity int, id int) int
-		PostLikes      func(childComplexity int) int
-		Posts          func(childComplexity int) int
-		User           func(childComplexity int, id int) int
-		UserByUsername func(childComplexity int, username string) int
-		Users          func(childComplexity int) int
+		Comment                func(childComplexity int, id int) int
+		CommentLike            func(childComplexity int, id int) int
+		CommentLikeByCommentID func(childComplexity int, commentID int) int
+		CommentLikes           func(childComplexity int) int
+		Comments               func(childComplexity int) int
+		CommentsByPostID       func(childComplexity int, id int) int
+		Follower               func(childComplexity int, id int) int
+		Followers              func(childComplexity int) int
+		Hashtag                func(childComplexity int, id int) int
+		HashtagByTitle         func(childComplexity int, title string) int
+		HashtagPost            func(childComplexity int, id int) int
+		Hashtags               func(childComplexity int) int
+		HashtagsPost           func(childComplexity int) int
+		Post                   func(childComplexity int, id int) int
+		PostLike               func(childComplexity int, id int) int
+		PostLikeByPostID       func(childComplexity int, postID int) int
+		PostLikes              func(childComplexity int) int
+		Posts                  func(childComplexity int) int
+		User                   func(childComplexity int, id int) int
+		UserByUsername         func(childComplexity int, username string) int
+		Users                  func(childComplexity int) int
 	}
 
 	User struct {
@@ -185,7 +200,8 @@ type HashtagPostResolver interface {
 	Hashtag(ctx context.Context, obj *pb.HashtagPost) (*pb.Hashtag, error)
 }
 type MutationResolver interface {
-	CreateUser(ctx context.Context, input *model.NewUser) (*pb.User, error)
+	Login(ctx context.Context, input model.LoginInput) (*model.AuthResponse, error)
+	CreateUser(ctx context.Context, input *model.NewUser) (*model.AuthResponse, error)
 	UpdateUser(ctx context.Context, input *model.EditUser) (*pb.User, error)
 	DeleteUser(ctx context.Context, input *int) (*pb.User, error)
 	CreatePost(ctx context.Context, input *model.NewPost) (*pb.Post, error)
@@ -195,9 +211,11 @@ type MutationResolver interface {
 	UpdateComment(ctx context.Context, input *model.EditComment) (*pb.Comment, error)
 	DeleteComment(ctx context.Context, input *int) (*pb.Comment, error)
 	CreatePostLike(ctx context.Context, input *model.NewPostLike) (*pb.PostLike, error)
-	DeletePostLike(ctx context.Context, input *int) (*pb.PostLike, error)
+	DeletePostLikeByID(ctx context.Context, input *int) (*pb.PostLike, error)
+	DeletePostLikeByUserID(ctx context.Context, input *int) (*pb.PostLike, error)
 	CreateCommentLike(ctx context.Context, input *model.NewCommentLike) (*pb.CommentLike, error)
-	DeleteCommentLike(ctx context.Context, input *int) (*pb.CommentLike, error)
+	DeleteCommentLikeByID(ctx context.Context, input *int) (*pb.CommentLike, error)
+	DeleteCommentLikeByUserID(ctx context.Context, input *int) (*pb.CommentLike, error)
 	CreateHashtag(ctx context.Context, input *model.NewHashtag) (*pb.Hashtag, error)
 	UpdateHashtag(ctx context.Context, input *model.EditHashtag) (*pb.Hashtag, error)
 	DeleteHashtag(ctx context.Context, input *int) (*pb.Hashtag, error)
@@ -221,11 +239,14 @@ type QueryResolver interface {
 	Post(ctx context.Context, id int) (*pb.Post, error)
 	Posts(ctx context.Context) ([]*pb.Post, error)
 	Comment(ctx context.Context, id int) (*pb.Comment, error)
+	CommentsByPostID(ctx context.Context, id int) ([]*pb.Comment, error)
 	Comments(ctx context.Context) ([]*pb.Comment, error)
 	PostLike(ctx context.Context, id int) (*pb.PostLike, error)
 	PostLikes(ctx context.Context) ([]*pb.PostLike, error)
+	PostLikeByPostID(ctx context.Context, postID int) ([]*pb.PostLike, error)
 	CommentLike(ctx context.Context, id int) (*pb.CommentLike, error)
 	CommentLikes(ctx context.Context) ([]*pb.CommentLike, error)
+	CommentLikeByCommentID(ctx context.Context, commentID int) ([]*pb.CommentLike, error)
 	HashtagByTitle(ctx context.Context, title string) (*pb.Hashtag, error)
 	Hashtag(ctx context.Context, id int) (*pb.Hashtag, error)
 	Hashtags(ctx context.Context) ([]*pb.Hashtag, error)
@@ -253,6 +274,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	ec := executionContext{nil, e}
 	_ = ec
 	switch typeName + "." + field {
+
+	case "AuthResponse.authToken":
+		if e.complexity.AuthResponse.AuthToken == nil {
+			break
+		}
+
+		return e.complexity.AuthResponse.AuthToken(childComplexity), true
+
+	case "AuthResponse.user":
+		if e.complexity.AuthResponse.User == nil {
+			break
+		}
+
+		return e.complexity.AuthResponse.User(childComplexity), true
+
+	case "AuthToken.accessToken":
+		if e.complexity.AuthToken.AccessToken == nil {
+			break
+		}
+
+		return e.complexity.AuthToken.AccessToken(childComplexity), true
 
 	case "Comment.contents":
 		if e.complexity.Comment.Contents == nil {
@@ -544,17 +586,29 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.DeleteComment(childComplexity, args["input"].(*int)), true
 
-	case "Mutation.deleteCommentLike":
-		if e.complexity.Mutation.DeleteCommentLike == nil {
+	case "Mutation.deleteCommentLikeById":
+		if e.complexity.Mutation.DeleteCommentLikeByID == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_deleteCommentLike_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_deleteCommentLikeById_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.DeleteCommentLike(childComplexity, args["input"].(*int)), true
+		return e.complexity.Mutation.DeleteCommentLikeByID(childComplexity, args["input"].(*int)), true
+
+	case "Mutation.deleteCommentLikeByUserId":
+		if e.complexity.Mutation.DeleteCommentLikeByUserID == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteCommentLikeByUserId_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteCommentLikeByUserID(childComplexity, args["input"].(*int)), true
 
 	case "Mutation.deleteFollower":
 		if e.complexity.Mutation.DeleteFollower == nil {
@@ -604,17 +658,29 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.DeletePost(childComplexity, args["input"].(*int)), true
 
-	case "Mutation.deletePostLike":
-		if e.complexity.Mutation.DeletePostLike == nil {
+	case "Mutation.deletePostLikeById":
+		if e.complexity.Mutation.DeletePostLikeByID == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_deletePostLike_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_deletePostLikeById_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.DeletePostLike(childComplexity, args["input"].(*int)), true
+		return e.complexity.Mutation.DeletePostLikeByID(childComplexity, args["input"].(*int)), true
+
+	case "Mutation.deletePostLikeByUserId":
+		if e.complexity.Mutation.DeletePostLikeByUserID == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deletePostLikeByUserId_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeletePostLikeByUserID(childComplexity, args["input"].(*int)), true
 
 	case "Mutation.deleteUser":
 		if e.complexity.Mutation.DeleteUser == nil {
@@ -627,6 +693,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.DeleteUser(childComplexity, args["input"].(*int)), true
+
+	case "Mutation.login":
+		if e.complexity.Mutation.Login == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_login_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.Login(childComplexity, args["input"].(model.LoginInput)), true
 
 	case "Mutation.updateComment":
 		if e.complexity.Mutation.UpdateComment == nil {
@@ -786,19 +864,31 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Comment(childComplexity, args["id"].(int)), true
 
-	case "Query.CommentLike":
+	case "Query.commentLike":
 		if e.complexity.Query.CommentLike == nil {
 			break
 		}
 
-		args, err := ec.field_Query_CommentLike_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_commentLike_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
 		return e.complexity.Query.CommentLike(childComplexity, args["id"].(int)), true
 
-	case "Query.CommentLikes":
+	case "Query.commentLikeByCommentId":
+		if e.complexity.Query.CommentLikeByCommentID == nil {
+			break
+		}
+
+		args, err := ec.field_Query_commentLikeByCommentId_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.CommentLikeByCommentID(childComplexity, args["comment_id"].(int)), true
+
+	case "Query.commentLikes":
 		if e.complexity.Query.CommentLikes == nil {
 			break
 		}
@@ -811,6 +901,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Comments(childComplexity), true
+
+	case "Query.commentsByPostId":
+		if e.complexity.Query.CommentsByPostID == nil {
+			break
+		}
+
+		args, err := ec.field_Query_commentsByPostId_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.CommentsByPostID(childComplexity, args["id"].(int)), true
 
 	case "Query.follower":
 		if e.complexity.Query.Follower == nil {
@@ -893,19 +995,31 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Post(childComplexity, args["id"].(int)), true
 
-	case "Query.PostLike":
+	case "Query.postLike":
 		if e.complexity.Query.PostLike == nil {
 			break
 		}
 
-		args, err := ec.field_Query_PostLike_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_postLike_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
 		return e.complexity.Query.PostLike(childComplexity, args["id"].(int)), true
 
-	case "Query.PostLikes":
+	case "Query.postLikeByPostId":
+		if e.complexity.Query.PostLikeByPostID == nil {
+			break
+		}
+
+		args, err := ec.field_Query_postLikeByPostId_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.PostLikeByPostID(childComplexity, args["post_id"].(int)), true
+
+	case "Query.postLikes":
 		if e.complexity.Query.PostLikes == nil {
 			break
 		}
@@ -1084,6 +1198,19 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
+	{Name: "graph/auth.graphqls", Input: `type AuthToken {
+  accessToken: String!
+}
+
+type AuthResponse {
+  authToken: AuthToken!
+  user: User!
+}
+
+input LoginInput {
+  username: String!
+  password: String!
+}`, BuiltIn: false},
 	{Name: "graph/comment.graphqls", Input: `type Comment {
   id: Int!
   created_at: Int!
@@ -1178,9 +1305,10 @@ input NewCommentLike {
 }
 `, BuiltIn: false},
 	{Name: "graph/mutations.graphqls", Input: `type Mutation {
+  login(input: LoginInput!): AuthResponse!
   # Users
-  createUser(input: NewUser):User!
-  updateUser(input: EditUser):User!
+  createUser(input: NewUser): AuthResponse!
+  updateUser(input: EditUser): User!
   deleteUser(input: Int):User
 
   # Posts
@@ -1195,11 +1323,13 @@ input NewCommentLike {
 
   # PostLikes
   createPostLike(input: NewPostLike): PostLike!
-  deletePostLike(input: Int): PostLike
+  deletePostLikeById(input: Int): PostLike
+  deletePostLikeByUserId(input: Int): PostLike
   
   # CommentLikes
   createCommentLike(input: NewCommentLike): CommentLike!
-  deleteCommentLike(input: Int): CommentLike
+  deleteCommentLikeById(input: Int): CommentLike
+  deleteCommentLikeByUserId(input: Int): CommentLike
 
   # Hashtag
   createHashtag(input: NewHashtag): Hashtag!
@@ -1248,13 +1378,16 @@ input EditPost {
   posts: [Post!]!
   # Comments
   comment(id: Int!): Comment!
+  commentsByPostId(id: Int!):[Comment!]!
   comments: [Comment!]!
   # PostLikes
-  PostLike(id: Int!): PostLike!
-  PostLikes: [PostLike!]!
+  postLike(id: Int!): PostLike!
+  postLikes: [PostLike!]!
+  postLikeByPostId(post_id: Int!): [PostLike!]!
   # CommentLikes
-  CommentLike(id: Int!): CommentLike!
-  CommentLikes: [CommentLike!]!
+  commentLike(id: Int!): CommentLike!
+  commentLikes: [CommentLike!]!
+  commentLikeByCommentId(comment_id: Int!): [CommentLike!]!
   # Hashtag
   hashtagByTitle(title: String!): Hashtag!
   hashtag(id: Int!): Hashtag!
@@ -1421,7 +1554,22 @@ func (ec *executionContext) field_Mutation_createUser_args(ctx context.Context, 
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_deleteCommentLike_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_deleteCommentLikeById_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *int
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_deleteCommentLikeByUserId_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 *int
@@ -1496,7 +1644,22 @@ func (ec *executionContext) field_Mutation_deleteHashtag_args(ctx context.Contex
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_deletePostLike_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_deletePostLikeById_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *int
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_deletePostLikeByUserId_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 *int
@@ -1533,6 +1696,21 @@ func (ec *executionContext) field_Mutation_deleteUser_args(ctx context.Context, 
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_login_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.LoginInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNLoginInput2cesargddᚋgrpcᚑgatewayᚋgraphᚋmodelᚐLoginInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -1601,36 +1779,6 @@ func (ec *executionContext) field_Mutation_updateUser_args(ctx context.Context, 
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_CommentLike_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 int
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["id"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_PostLike_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 int
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["id"] = arg0
-	return args, nil
-}
-
 func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -1646,7 +1794,52 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 	return args, nil
 }
 
+func (ec *executionContext) field_Query_commentLikeByCommentId_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["comment_id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("comment_id"))
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["comment_id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_commentLike_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Query_comment_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_commentsByPostId_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 int
@@ -1707,6 +1900,36 @@ func (ec *executionContext) field_Query_hashtagPost_args(ctx context.Context, ra
 }
 
 func (ec *executionContext) field_Query_hashtag_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_postLikeByPostId_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["post_id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("post_id"))
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["post_id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_postLike_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 int
@@ -1803,6 +2026,111 @@ func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArg
 // endregion ************************** directives.gotpl **************************
 
 // region    **************************** field.gotpl *****************************
+
+func (ec *executionContext) _AuthResponse_authToken(ctx context.Context, field graphql.CollectedField, obj *model.AuthResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AuthResponse",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AuthToken, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.AuthToken)
+	fc.Result = res
+	return ec.marshalNAuthToken2ᚖcesargddᚋgrpcᚑgatewayᚋgraphᚋmodelᚐAuthToken(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AuthResponse_user(ctx context.Context, field graphql.CollectedField, obj *model.AuthResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AuthResponse",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.User, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*pb.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚖcesargddᚋgrpcᚑgatewayᚋpbᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AuthToken_accessToken(ctx context.Context, field graphql.CollectedField, obj *model.AuthToken) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AuthToken",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AccessToken, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
 
 func (ec *executionContext) _Comment_id(ctx context.Context, field graphql.CollectedField, obj *pb.Comment) (ret graphql.Marshaler) {
 	defer func() {
@@ -2708,6 +3036,48 @@ func (ec *executionContext) _HashtagPost_hashtag(ctx context.Context, field grap
 	return ec.marshalNHashtag2ᚖcesargddᚋgrpcᚑgatewayᚋpbᚐHashtag(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_login(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_login_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().Login(rctx, args["input"].(model.LoginInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.AuthResponse)
+	fc.Result = res
+	return ec.marshalNAuthResponse2ᚖcesargddᚋgrpcᚑgatewayᚋgraphᚋmodelᚐAuthResponse(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Mutation_createUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -2745,9 +3115,9 @@ func (ec *executionContext) _Mutation_createUser(ctx context.Context, field grap
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*pb.User)
+	res := resTmp.(*model.AuthResponse)
 	fc.Result = res
-	return ec.marshalNUser2ᚖcesargddᚋgrpcᚑgatewayᚋpbᚐUser(ctx, field.Selections, res)
+	return ec.marshalNAuthResponse2ᚖcesargddᚋgrpcᚑgatewayᚋgraphᚋmodelᚐAuthResponse(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_updateUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -3119,7 +3489,7 @@ func (ec *executionContext) _Mutation_createPostLike(ctx context.Context, field 
 	return ec.marshalNPostLike2ᚖcesargddᚋgrpcᚑgatewayᚋpbᚐPostLike(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Mutation_deletePostLike(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Mutation_deletePostLikeById(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -3136,7 +3506,7 @@ func (ec *executionContext) _Mutation_deletePostLike(ctx context.Context, field 
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_deletePostLike_args(ctx, rawArgs)
+	args, err := ec.field_Mutation_deletePostLikeById_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -3144,7 +3514,46 @@ func (ec *executionContext) _Mutation_deletePostLike(ctx context.Context, field 
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().DeletePostLike(rctx, args["input"].(*int))
+		return ec.resolvers.Mutation().DeletePostLikeByID(rctx, args["input"].(*int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*pb.PostLike)
+	fc.Result = res
+	return ec.marshalOPostLike2ᚖcesargddᚋgrpcᚑgatewayᚋpbᚐPostLike(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_deletePostLikeByUserId(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_deletePostLikeByUserId_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DeletePostLikeByUserID(rctx, args["input"].(*int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3200,7 +3609,7 @@ func (ec *executionContext) _Mutation_createCommentLike(ctx context.Context, fie
 	return ec.marshalNCommentLike2ᚖcesargddᚋgrpcᚑgatewayᚋpbᚐCommentLike(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Mutation_deleteCommentLike(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Mutation_deleteCommentLikeById(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -3217,7 +3626,7 @@ func (ec *executionContext) _Mutation_deleteCommentLike(ctx context.Context, fie
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_deleteCommentLike_args(ctx, rawArgs)
+	args, err := ec.field_Mutation_deleteCommentLikeById_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -3225,7 +3634,46 @@ func (ec *executionContext) _Mutation_deleteCommentLike(ctx context.Context, fie
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().DeleteCommentLike(rctx, args["input"].(*int))
+		return ec.resolvers.Mutation().DeleteCommentLikeByID(rctx, args["input"].(*int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*pb.CommentLike)
+	fc.Result = res
+	return ec.marshalOCommentLike2ᚖcesargddᚋgrpcᚑgatewayᚋpbᚐCommentLike(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_deleteCommentLikeByUserId(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_deleteCommentLikeByUserId_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DeleteCommentLikeByUserID(rctx, args["input"].(*int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -4243,6 +4691,48 @@ func (ec *executionContext) _Query_comment(ctx context.Context, field graphql.Co
 	return ec.marshalNComment2ᚖcesargddᚋgrpcᚑgatewayᚋpbᚐComment(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Query_commentsByPostId(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_commentsByPostId_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().CommentsByPostID(rctx, args["id"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*pb.Comment)
+	fc.Result = res
+	return ec.marshalNComment2ᚕᚖcesargddᚋgrpcᚑgatewayᚋpbᚐCommentᚄ(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Query_comments(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -4278,7 +4768,7 @@ func (ec *executionContext) _Query_comments(ctx context.Context, field graphql.C
 	return ec.marshalNComment2ᚕᚖcesargddᚋgrpcᚑgatewayᚋpbᚐCommentᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Query_PostLike(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Query_postLike(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4295,7 +4785,7 @@ func (ec *executionContext) _Query_PostLike(ctx context.Context, field graphql.C
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_PostLike_args(ctx, rawArgs)
+	args, err := ec.field_Query_postLike_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -4320,7 +4810,7 @@ func (ec *executionContext) _Query_PostLike(ctx context.Context, field graphql.C
 	return ec.marshalNPostLike2ᚖcesargddᚋgrpcᚑgatewayᚋpbᚐPostLike(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Query_PostLikes(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Query_postLikes(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4355,7 +4845,7 @@ func (ec *executionContext) _Query_PostLikes(ctx context.Context, field graphql.
 	return ec.marshalNPostLike2ᚕᚖcesargddᚋgrpcᚑgatewayᚋpbᚐPostLikeᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Query_CommentLike(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Query_postLikeByPostId(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4372,7 +4862,49 @@ func (ec *executionContext) _Query_CommentLike(ctx context.Context, field graphq
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_CommentLike_args(ctx, rawArgs)
+	args, err := ec.field_Query_postLikeByPostId_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().PostLikeByPostID(rctx, args["post_id"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*pb.PostLike)
+	fc.Result = res
+	return ec.marshalNPostLike2ᚕᚖcesargddᚋgrpcᚑgatewayᚋpbᚐPostLikeᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_commentLike(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_commentLike_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -4397,7 +4929,7 @@ func (ec *executionContext) _Query_CommentLike(ctx context.Context, field graphq
 	return ec.marshalNCommentLike2ᚖcesargddᚋgrpcᚑgatewayᚋpbᚐCommentLike(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Query_CommentLikes(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Query_commentLikes(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4416,6 +4948,48 @@ func (ec *executionContext) _Query_CommentLikes(ctx context.Context, field graph
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Query().CommentLikes(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*pb.CommentLike)
+	fc.Result = res
+	return ec.marshalNCommentLike2ᚕᚖcesargddᚋgrpcᚑgatewayᚋpbᚐCommentLikeᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_commentLikeByCommentId(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_commentLikeByCommentId_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().CommentLikeByCommentID(rctx, args["comment_id"].(int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -6376,6 +6950,37 @@ func (ec *executionContext) unmarshalInputEditUser(ctx context.Context, obj inte
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputLoginInput(ctx context.Context, obj interface{}) (model.LoginInput, error) {
+	var it model.LoginInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "username":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("username"))
+			it.Username, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "password":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("password"))
+			it.Password, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputNewComment(ctx context.Context, obj interface{}) (model.NewComment, error) {
 	var it model.NewComment
 	asMap := map[string]interface{}{}
@@ -6663,6 +7268,78 @@ func (ec *executionContext) unmarshalInputNewUser(ctx context.Context, obj inter
 // endregion ************************** interface.gotpl ***************************
 
 // region    **************************** object.gotpl ****************************
+
+var authResponseImplementors = []string{"AuthResponse"}
+
+func (ec *executionContext) _AuthResponse(ctx context.Context, sel ast.SelectionSet, obj *model.AuthResponse) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, authResponseImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("AuthResponse")
+		case "authToken":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._AuthResponse_authToken(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "user":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._AuthResponse_user(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var authTokenImplementors = []string{"AuthToken"}
+
+func (ec *executionContext) _AuthToken(ctx context.Context, sel ast.SelectionSet, obj *model.AuthToken) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, authTokenImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("AuthToken")
+		case "accessToken":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._AuthToken_accessToken(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
 
 var commentImplementors = []string{"Comment"}
 
@@ -7102,6 +7779,16 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Mutation")
+		case "login":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_login(ctx, field)
+			}
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, innerFunc)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "createUser":
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createUser(ctx, field)
@@ -7193,9 +7880,16 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "deletePostLike":
+		case "deletePostLikeById":
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_deletePostLike(ctx, field)
+				return ec._Mutation_deletePostLikeById(ctx, field)
+			}
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, innerFunc)
+
+		case "deletePostLikeByUserId":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_deletePostLikeByUserId(ctx, field)
 			}
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, innerFunc)
@@ -7210,9 +7904,16 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "deleteCommentLike":
+		case "deleteCommentLikeById":
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_deleteCommentLike(ctx, field)
+				return ec._Mutation_deleteCommentLikeById(ctx, field)
+			}
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, innerFunc)
+
+		case "deleteCommentLikeByUserId":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_deleteCommentLikeByUserId(ctx, field)
 			}
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, innerFunc)
@@ -7659,6 +8360,29 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			out.Concurrently(i, func() graphql.Marshaler {
 				return rrm(innerCtx)
 			})
+		case "commentsByPostId":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_commentsByPostId(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
 		case "comments":
 			field := field
 
@@ -7682,7 +8406,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			out.Concurrently(i, func() graphql.Marshaler {
 				return rrm(innerCtx)
 			})
-		case "PostLike":
+		case "postLike":
 			field := field
 
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
@@ -7691,7 +8415,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_PostLike(ctx, field)
+				res = ec._Query_postLike(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -7705,7 +8429,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			out.Concurrently(i, func() graphql.Marshaler {
 				return rrm(innerCtx)
 			})
-		case "PostLikes":
+		case "postLikes":
 			field := field
 
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
@@ -7714,7 +8438,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_PostLikes(ctx, field)
+				res = ec._Query_postLikes(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -7728,7 +8452,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			out.Concurrently(i, func() graphql.Marshaler {
 				return rrm(innerCtx)
 			})
-		case "CommentLike":
+		case "postLikeByPostId":
 			field := field
 
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
@@ -7737,7 +8461,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_CommentLike(ctx, field)
+				res = ec._Query_postLikeByPostId(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -7751,7 +8475,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			out.Concurrently(i, func() graphql.Marshaler {
 				return rrm(innerCtx)
 			})
-		case "CommentLikes":
+		case "commentLike":
 			field := field
 
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
@@ -7760,7 +8484,53 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_CommentLikes(ctx, field)
+				res = ec._Query_commentLike(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
+		case "commentLikes":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_commentLikes(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
+		case "commentLikeByCommentId":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_commentLikeByCommentId(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -8498,6 +9268,30 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 
 // region    ***************************** type.gotpl *****************************
 
+func (ec *executionContext) marshalNAuthResponse2cesargddᚋgrpcᚑgatewayᚋgraphᚋmodelᚐAuthResponse(ctx context.Context, sel ast.SelectionSet, v model.AuthResponse) graphql.Marshaler {
+	return ec._AuthResponse(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNAuthResponse2ᚖcesargddᚋgrpcᚑgatewayᚋgraphᚋmodelᚐAuthResponse(ctx context.Context, sel ast.SelectionSet, v *model.AuthResponse) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._AuthResponse(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNAuthToken2ᚖcesargddᚋgrpcᚑgatewayᚋgraphᚋmodelᚐAuthToken(ctx context.Context, sel ast.SelectionSet, v *model.AuthToken) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._AuthToken(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNBoolean2bool(ctx context.Context, v interface{}) (bool, error) {
 	res, err := graphql.UnmarshalBoolean(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -8846,6 +9640,11 @@ func (ec *executionContext) marshalNInt2int64(ctx context.Context, sel ast.Selec
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) unmarshalNLoginInput2cesargddᚋgrpcᚑgatewayᚋgraphᚋmodelᚐLoginInput(ctx context.Context, v interface{}) (model.LoginInput, error) {
+	res, err := ec.unmarshalInputLoginInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalNPost2cesargddᚋgrpcᚑgatewayᚋpbᚐPost(ctx context.Context, sel ast.SelectionSet, v pb.Post) graphql.Marshaler {
