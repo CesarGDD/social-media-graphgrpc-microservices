@@ -82,6 +82,7 @@ const PostsCard: FunctionComponent<{
       <div className=" flex justify-between ml-2">
         <div className=" flex items-center">
           <Image
+            loader={ () => user.avatar!}
             onClick={() => route.push(`/profile/${user_id}`)}
             className=" rounded-full border-5 border-gray-500 cursor-pointer"
             src={user.avatar!}
@@ -96,7 +97,7 @@ const PostsCard: FunctionComponent<{
       </div>
       {/* Post */}
       <div className="flex flex-col mt-4 border-t">
-        <Image src={url} width={600} height={750} />
+        <Image loader={() => url} src={url} width={600} height={750} alt="Post Image" />
         <div className=" flex mx-2 items-center p-2 space-x-6">
           {/* Like Create comment */}
           <div onClick={likeHandler}>

@@ -15,10 +15,10 @@ spec:
       volumes:
         - name: postgres-claim
           persistentVolumeClaim:
-            claimName: database-claim
+            claimName: volume-claim
       containers:
       - name: postgres
-        image: postgres
+        image: postgres:latest
         ports:
         - containerPort: 5432
         volumeMounts:
@@ -29,8 +29,23 @@ spec:
           - name: POSTGRES_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: pgpassword
-                key: POSTGRES_PASSWORD
+                name: postgres-secret
+                key: postgres-password
+          - name: POSTGRES_USER
+            valueFrom:
+              secretKeyRef:
+                name: postgres-secret
+                key: postgres-user
+          - name: POSTGRES_DB
+            valueFrom:
+              secretKeyRef:
+                name: postgres-secret
+                key: postgres-db
+          - name: POSTGRES_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: postgres-config
+                key: postgres-url
 
 ---
 
@@ -39,10 +54,11 @@ kind: Service
 metadata:
   name: postgres-service
 spec:
-  type: ClusterIP
+  type: LoadBalancer
   selector:
     app: postgres
   ports:
-  - port: 5432
+  - protocol: TCP
+    port: 5432
     targetPort: 5432
 

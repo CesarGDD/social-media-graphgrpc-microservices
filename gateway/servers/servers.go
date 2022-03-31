@@ -10,7 +10,7 @@ import (
 
 func UserServer() (pb.UsersServiceClient, pb.FollowersServiceClient) {
 	opts := grpc.WithInsecure()
-	ccu, err := grpc.Dial(os.Getenv("USERS_ADDRESS"), opts)
+	ccu, err := grpc.Dial(os.Getenv("USERS_ADDRESS")+":"+os.Getenv("USERS_PORT"), opts)
 	if err != nil {
 		log.Fatalf("Could not connect: %v", err)
 	}
@@ -21,7 +21,7 @@ func UserServer() (pb.UsersServiceClient, pb.FollowersServiceClient) {
 }
 func PostServer() pb.PostsServiceClient {
 	opts := grpc.WithInsecure()
-	ccp, err := grpc.Dial(os.Getenv("POSTS_ADDRESS"), opts)
+	ccp, err := grpc.Dial(os.Getenv("POSTS_ADDRESS")+":"+os.Getenv("POSTS_PORT"), opts)
 	if err != nil {
 		log.Fatalf("Could not connect: %v", err)
 	}
@@ -31,7 +31,7 @@ func PostServer() pb.PostsServiceClient {
 }
 func CommentServer() pb.CommentsServiceClient {
 	opts := grpc.WithInsecure()
-	ccc, err := grpc.Dial(os.Getenv("COMMENTS_ADDRESS"), opts)
+	ccc, err := grpc.Dial(os.Getenv("COMMENTS_ADDRESS")+":"+os.Getenv("COMMENTS_PORT"), opts)
 	if err != nil {
 		log.Fatalf("Could not connect: %v", err)
 	}
@@ -41,7 +41,7 @@ func CommentServer() pb.CommentsServiceClient {
 }
 func LikeServer() (pb.PostLikesServiceClient, pb.CommentLikesServiceClient) {
 	opts := grpc.WithInsecure()
-	ccl, err := grpc.Dial(os.Getenv("LIKES_ADDRESS"), opts)
+	ccl, err := grpc.Dial(os.Getenv("LIKES_ADDRESS")+":"+os.Getenv("LIKES_PORT"), opts)
 	if err != nil {
 		log.Fatalf("Could not connect: %v", err)
 	}
@@ -52,7 +52,7 @@ func LikeServer() (pb.PostLikesServiceClient, pb.CommentLikesServiceClient) {
 }
 func HashtagServer() (pb.HashtagsServiceClient, pb.HashtagPostsServiceClient) {
 	opts := grpc.WithInsecure()
-	cch, err := grpc.Dial(os.Getenv("HASHTAGS_ADDRESS"), opts)
+	cch, err := grpc.Dial(os.Getenv("HASHTAGS_ADDRESS")+":"+os.Getenv("HASHTAGS_PORT"), opts)
 	if err != nil {
 		log.Fatalf("Could not connect: %v", err)
 	}

@@ -4,6 +4,7 @@ import (
 	"cesargdd/grpc-gateway/authUser"
 	"cesargdd/grpc-gateway/graph"
 	"cesargdd/grpc-gateway/graph/generated"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -19,6 +20,7 @@ import (
 const defaultPort = "8080"
 
 func main() {
+	fmt.Println(os.Getenv("USERS_ADDRESS"))
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = defaultPort

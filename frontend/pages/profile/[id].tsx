@@ -22,7 +22,7 @@ type UserData = {
   user: User;
 };
 
-const profile = () => {
+const Profile = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const router = useRouter();
   const { id } = router.query;
@@ -100,6 +100,7 @@ const profile = () => {
           <div className="">
             {isSuccess && (
               <Image
+                loader={ ()=> user!.user.avatar!}
                 className=" rounded-full"
                 src={user!.user.avatar!}
                 width={100}
@@ -143,6 +144,7 @@ const profile = () => {
         {user!.user.posts?.map((post) => (
           <div className=" px-1" key={post.id}>
             <Image
+              loader={()=> post.url}
               className=" rounded-md cursor-pointer"
               src={post.url}
               width={180}
@@ -162,4 +164,4 @@ const profile = () => {
   );
 };
 
-export default profile;
+export default Profile;

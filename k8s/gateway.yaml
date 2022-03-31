@@ -26,6 +26,16 @@ spec:
             value: "likes-service.default"
           - name: POSTS_ADDRESS
             value: "posts-service.default"
+          - name: USERS_PORT
+            value: "50051"
+          - name: COMMENTS_PORT
+            value: "50053"
+          - name: HASHTAGS_PORT
+            value: "50055"
+          - name: LIKES_PORT
+            value: "50054"
+          - name: POSTS_PORT
+            value: "50052"
 
 ---
 
@@ -36,7 +46,7 @@ metadata:
 spec:
   selector:
     app: gateway
-  type: LoadBalancer
+  type: ClusterIP
   ports:
   - port: 8080
     targetPort: 8080

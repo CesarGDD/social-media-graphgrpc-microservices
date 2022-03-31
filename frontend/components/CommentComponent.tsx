@@ -86,6 +86,7 @@ const CommentComponent: FunctionComponent<{
     <div className=" flex justify-between px-4 pb-1 bg-gray-50">
       <div className="flex ">
         <Image
+          loader={() => user.avatar!}
           className=" rounded-full"
           src={user.avatar!}
           width={25}

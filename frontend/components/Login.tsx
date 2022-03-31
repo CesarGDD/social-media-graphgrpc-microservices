@@ -29,14 +29,15 @@ const Login: FunctionComponent<{
   const [email, setEmail] = useState("");
   const [bio, setBio] = useState("");
   const [newUser, setNewUser] = useState(false);
+  const [error, setError] = useState<null | string>(null);
 
-  const { mutate: loginUser, data: loginData } = useLoginMutation(
+  const { mutate: loginUser, data: loginData} = useLoginMutation(
     graphqlRequest(),
     {
       onSuccess: (
         data: LoginMutation,
         variables: LoginMutationVariables,
-        context: unknown
+        context: unknown,
       ) => {
         dispatch(
           login({
@@ -49,8 +50,12 @@ const Login: FunctionComponent<{
             token: data.login.authToken.accessToken,
           })
         );
+        modal(false)
         return console.log("Login", data);
       },
+      onError: () => {
+        setError("Invalid Credendials")
+      }
     }
   );
 
@@ -73,6 +78,7 @@ const Login: FunctionComponent<{
             token: data.createUser.authToken.accessToken,
           })
         );
+        modal(false)
         return console.log("Uxer Created", data);
       },
     }
@@ -82,12 +88,18 @@ const Login: FunctionComponent<{
     event.preventDefault();
     if (newUser) {
       createUser({ input: { username, password, avatar, email, bio } });
-    } else {
+    }else {
       loginUser({ input: { username, password } });
     }
-    modal(false);
+    // modal(false);
   };
 
+  const newUserHandler = () => {
+    setError(null)
+    setUsername('')
+    setPassword('')
+    setNewUser(!newUser)
+  }
   return (
     <div className=" flex justify-center mt-7">
       <form
@@ -108,6 +120,7 @@ const Login: FunctionComponent<{
           onChange={(e: any) => setPassword(e.target.value)}
           required
         />
+        {error ? <p> ${error} </p>: null}
         {newUser ? (
           <>
             <Input
@@ -138,7 +151,7 @@ const Login: FunctionComponent<{
           {newUser ? "Create Account" : "Login"}
         </Button>
         <p
-          onClick={() => setNewUser(!newUser)}
+          onClick={newUserHandler}
           className=" text-gray-400 text-sm cursor-pointer"
         >
           I {newUser ? "" : "don't"} have an account

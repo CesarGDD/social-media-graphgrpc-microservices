@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 
 import {GraphQLClient} from 'graphql-request'
 
-const graphqlReq = new GraphQLClient("http://localhost:8080/query")
+const graphqlReq = new GraphQLClient(`http://${process.env.NEXT_PUBLIC_API_URL}/query`)
 
 export const graphqlRequest = () => {
     const currentToken = useSelector(selectToken)

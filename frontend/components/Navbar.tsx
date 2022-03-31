@@ -14,8 +14,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../store/user-slice";
 
 
-
 const Navbar = () => {
+  console.log("gateway", process.env.NEXT_PUBLIC_API_URL)
+  console.log("port", process.env.NEXTGATEWAY_PORT)
+
+
   const dispatch = useDispatch()
   const route = useRouter();
   const [modalOpen, setModalOpen] = useState(false);

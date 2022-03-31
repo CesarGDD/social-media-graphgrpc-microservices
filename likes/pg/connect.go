@@ -3,16 +3,17 @@ package pg
 import (
 	"database/sql"
 	"fmt"
+	"os"
 
 	_ "github.com/lib/pq"
 )
 
-const (
-	hostname      = "postgres"
+var (
+	hostname      = os.Getenv("POSTGRES_HOST")
 	host_port     = 5432
-	username      = "user"
-	password      = "password"
-	database_name = "grpcDB"
+	username      = os.Getenv("POSTGRES_USER")
+	password      = os.Getenv("POSTGRES_PASSWORD")
+	database_name = os.Getenv("POSTGRES_DB")
 )
 
 func Connect() *sql.DB {
@@ -23,5 +24,10 @@ func Connect() *sql.DB {
 	if err != nil {
 		fmt.Printf("Error conecting to the DB", err)
 	}
+
+	db.Exec("CREATE TABLE IF NOT EXISTS post_likes (id SERIAL PRIMARY KEY, created_at BIGINT NOT NULL, user_id INTEGER NOT NULL, post_id INTEGER NOT NULL);")
+
+	db.Exec("CREATE TABLE IF NOT EXISTS comment_likes (id SERIAL PRIMARY KEY, created_at BIGINT NOT NULL, user_id INTEGER NOT NULL, comment_id INTEGER NOT NULL);")
+
 	return db
 }

@@ -1,4 +1,5 @@
-import { Comment, Post, User } from "./src/lib/types";
+import { Comment, Post, User } from "./src/generated/generated"
+
 
 export const users:User[] = [
     {

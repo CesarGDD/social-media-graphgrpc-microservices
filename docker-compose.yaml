@@ -14,6 +14,7 @@ services:
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
+      POSTGRES_DB: grpcDB
     ports:
       - "5432:5432"
     volumes:
@@ -25,6 +26,11 @@ services:
       - "50051:50051"
     depends_on: 
       - postgres
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: grpcDB
+      POSTGRES_HOST: postgres
   posts:
     build: ./posts
     restart: always
@@ -32,12 +38,22 @@ services:
       - "50052:50052"
     depends_on: 
       - postgres
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: grpcDB
+      POSTGRES_HOST: postgres
   comments:
     build: ./comments
     ports:
       - "50053:50053"
     depends_on: 
       - postgres
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: grpcDB
+      POSTGRES_HOST: postgres
   likes:
     build: ./likes
     restart: always
@@ -45,6 +61,11 @@ services:
       - "50054:50054"
     depends_on: 
       - postgres
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: grpcDB
+      POSTGRES_HOST: postgres
   hashtags:
     build: ./hashtag
     restart: always
@@ -52,6 +73,11 @@ services:
       - "50055:50055"
     depends_on: 
       - postgres
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: grpcDB
+      POSTGRES_HOST: postgres
   gateway:
     build: ./gateway
     ports:
@@ -64,10 +90,24 @@ services:
       - hashtags
     restart: always
     environment:
-        USERS_ADDRESS: users:50051
-        POSTS_ADDRESS: posts:50052
-        COMMENTS_ADDRESS: comments:50053
-        LIKES_ADDRESS: likes:50054
-        HASHTAGS_ADDRESS: hashtags:50055
+        USERS_ADDRESS: users
+        POSTS_ADDRESS: posts
+        COMMENTS_ADDRESS: comments
+        LIKES_ADDRESS: likes
+        HASHTAGS_ADDRESS: hashtags
+        FRONTEND: frontend:3000
+        USERS_PORT: 50051
+        POSTS_PORT: 50052
+        COMMENTS_PORT: 50053
+        LIKES_PORT: 50054
+        HASHTAGS_PORT: 50055
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - gateway
+    environment:
+        NEXT_PUBLIC_API_URL: localhost:8080
 volumes: 
   data:
